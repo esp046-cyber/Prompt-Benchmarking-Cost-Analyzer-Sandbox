@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=414, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Bench Sandbox">
@@ -14,37 +14,33 @@
   :root {
     --bg: #000000;
     --surface: #1c1c1e;
+    --surface-border: rgba(255,255,255,0.08);
     --surface-2: #2c2c2e;
     --surface-3: #3a3a3c;
-    --border: rgba(255,255,255,0.09);
-    --border-strong: rgba(255,255,255,0.16);
-    --text: #f2f2f7;
+    --text: #f5f5f7;
     --text-dim: #98989f;
     --text-faint: #636366;
-    --accent: #35d0c0;
-    --accent-dim: #1f7d73;
-    --amber: #ffb454;
-    --danger: #ff453a;
-    --success: #32d74b;
-    --radius-s: 8px;
-    --radius-m: 12px;
-    --radius-l: 18px;
-    --header-h: 56px;
-    --bar-h: 84px;
-    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --accent: #30d158;
+    --accent-ink: #002b0d;
+    --coral: #ff453a;
+    --radius-card: 16px;
+    --radius-input: 12px;
+    --radius-pill: 999px;
+    --header-h: 52px;
+    --bar-h: 82px;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif;
     --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --shadow-card: 0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     background: var(--bg);
     color: var(--text);
     font-family: var(--sans);
     -webkit-font-smoothing: antialiased;
-    overscroll-behavior-y: none;
   }
 
   body {
@@ -52,6 +48,7 @@
     margin: 0 auto;
     min-height: 100vh;
     min-height: 100dvh;
+    -webkit-overflow-scrolling: touch;
     padding-top: calc(var(--header-h) + env(safe-area-inset-top));
     padding-bottom: calc(var(--bar-h) + env(safe-area-inset-bottom) + 12px);
     position: relative;
@@ -59,376 +56,219 @@
 
   button, select, input, textarea { font-family: inherit; color: inherit; }
 
-  /* ---------- Header ---------- */
+  /* ---------- Header (Layer 2 chrome) ---------- */
   header.topbar {
     position: fixed;
     top: 0; left: 0; right: 0;
-    max-width: 480px;
-    margin: 0 auto;
+    max-width: 480px; margin: 0 auto;
     height: calc(var(--header-h) + env(safe-area-inset-top));
     padding-top: env(safe-area-inset-top);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-left: 16px;
-    padding-right: 8px;
-    background: rgba(20,20,22,0.72);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    backdrop-filter: blur(20px) saturate(150%);
-    border-bottom: 1px solid var(--border);
-    z-index: 40;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-left: 6px; padding-right: 6px;
+    background: rgba(28,28,30,0.85);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    z-index: 50;
   }
-  header.topbar h1 {
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    margin: 0;
+  .topbar .title-block { display: flex; flex-direction: column; align-items: center; }
+  .topbar h1 { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+  .status-pill {
+    margin-top: 2px;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    padding: 2px 9px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
-  .header-actions { display: flex; gap: 2px; }
   .icon-btn {
     width: 44px; height: 44px;
     display: flex; align-items: center; justify-content: center;
-    background: transparent; border: none;
-    border-radius: 50%;
-    color: var(--text);
+    background: transparent; border: none; border-radius: 50%; color: var(--text);
   }
   .icon-btn:active { background: var(--surface-2); }
-  .icon-btn svg { width: 21px; height: 21px; }
+  .icon-btn svg { width: 20px; height: 20px; }
 
   /* ---------- Layout ---------- */
   main { padding: 16px 16px 8px; }
+  section { margin-bottom: 20px; }
+  .section-label { font-size: 13px; font-weight: 600; color: var(--text-dim); margin: 0 0 8px 2px; }
 
-  section { margin-bottom: 22px; }
-
-  .section-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-dim);
-    margin: 0 0 8px 2px;
-  }
-
-  select, textarea, input[type=text], input[type=password] {
+  select, textarea, input[type=text], input[type=password], input[type=search] {
     width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-m);
+    background: var(--surface-2);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-input);
     color: var(--text);
     padding: 12px 14px;
     font-size: 15px;
     min-height: 44px;
-    appearance: none;
-    -webkit-appearance: none;
+    appearance: none; -webkit-appearance: none;
   }
-  select:focus, textarea:focus, input:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
+  select:focus, textarea:focus, input:focus { outline: none; border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 84px; line-height: 1.45; }
 
-  textarea {
-    resize: vertical;
-    min-height: 84px;
-    line-height: 1.4;
-  }
-
-  select {
+  .preset-row select {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%2398989f' d='M6 8 0 0h12z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 34px;
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 34px;
   }
 
-  .field-gap { margin-top: 10px; }
-
-  /* Dataset preset row */
-  .preset-row { display: flex; gap: 8px; align-items: center; }
-  .preset-row select { flex: 1; }
-
-  /* Model selectors: stacked cards, thumb-friendly */
+  /* ---------- Model slot cards (Layer 1) ---------- */
   .model-slot {
+    width: 100%;
+    text-align: left;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-m);
-    padding: 10px 14px;
-    margin-bottom: 8px;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    min-height: 44px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
   }
   .model-slot .slot-label {
-    font-size: 11px;
-    color: var(--text-faint);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 4px;
+    font-size: 10.5px; color: var(--text-faint); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;
   }
-  .model-slot select {
-    background: transparent;
-    border: none;
-    padding: 4px 24px 4px 0;
-    min-height: 30px;
-    font-size: 16px;
-    font-weight: 500;
+  .model-slot .slot-name { font-size: 15px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .model-slot .slot-meta { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+  .badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+    padding: 2px 8px; border-radius: var(--radius-pill);
+    background: var(--surface-3); color: var(--text-dim);
   }
+  .model-slot .chevron { color: var(--text-faint); flex-shrink: 0; }
 
   .eval-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-m);
-    padding: 12px 14px;
-    min-height: 44px;
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 12px 14px; min-height: 44px;
   }
   .eval-row label { flex: 1; font-size: 15px; }
-  .switch {
-    position: relative;
-    width: 48px; height: 28px;
-    flex-shrink: 0;
-  }
-  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin:0; cursor:pointer; }
-  .switch .track {
-    position: absolute; inset: 0;
-    background: var(--surface-3);
-    border-radius: 999px;
-    transition: background .15s;
-  }
-  .switch .knob {
-    position: absolute; top: 2px; left: 2px;
-    width: 24px; height: 24px;
-    background: #fff;
-    border-radius: 50%;
-    transition: transform .15s;
-  }
-  .switch input:checked + .track { background: var(--success); }
+  .switch { position: relative; width: 48px; height: 28px; flex-shrink: 0; }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .switch .track { position: absolute; inset: 0; background: var(--surface-3); border-radius: var(--radius-pill); transition: background .15s; }
+  .switch .knob { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; background: #fff; border-radius: 50%; transition: transform .15s; }
+  .switch input:checked + .track { background: var(--accent); }
   .switch input:checked + .track + .knob { transform: translateX(20px); }
-
   .judge-select-wrap { margin-top: 8px; }
   .judge-select-wrap.hidden { display: none; }
 
   /* ---------- Results ---------- */
   #results { display: flex; flex-direction: column; gap: 12px; }
-
   .empty-state {
-    text-align: center;
-    color: var(--text-faint);
-    font-size: 14px;
-    padding: 36px 20px;
-    border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-l);
+    text-align: center; color: var(--text-faint); font-size: 14px; padding: 36px 20px;
+    border: 1px dashed rgba(255,255,255,0.16); border-radius: var(--radius-card);
   }
-
   .result-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-l);
-    padding: 14px 16px;
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 14px 16px;
   }
   .result-card.is-error { border-color: rgba(255,69,58,0.4); }
   .result-card.is-loading { opacity: 0.6; }
-
-  .result-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
+  .result-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
   .result-head .model-name { font-size: 15px; font-weight: 600; }
-  .result-head .provider-tag {
-    font-size: 10px;
-    color: var(--text-faint);
-    background: var(--surface-3);
-    padding: 2px 7px;
-    border-radius: 5px;
-    margin-left: 6px;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
+  .result-head .head-badges { display: flex; gap: 6px; margin-top: 4px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .status-dot.ok { background: var(--accent); }
+  .status-dot.err { background: var(--coral); }
+  .status-dot.pending { background: var(--text-faint); }
 
-  .metrics-row {
-    display: flex;
-    gap: 14px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }
+  .metrics-row { display: flex; gap: 14px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-bottom: 10px; flex-wrap: wrap; }
   .metrics-row .metric strong { color: var(--text); font-weight: 600; }
-  .metric.cost strong { color: var(--amber); }
-  .metric.latency strong { color: var(--accent); }
-
+  .metric.cost strong { color: var(--accent); }
   .response-text {
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--text);
-    white-space: pre-wrap;
-    word-break: break-word;
-    max-height: 220px;
-    overflow-y: auto;
-    background: var(--surface-2);
-    border-radius: var(--radius-s);
-    padding: 10px 12px;
+    font-size: 14px; line-height: 1.5; color: var(--text); white-space: pre-wrap; word-break: break-word;
+    max-height: 220px; overflow-y: auto; background: var(--surface-2); border-radius: var(--radius-input); padding: 10px 12px;
   }
-  .error-text { color: var(--danger); font-size: 13px; }
-
-  .judge-box {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-  }
+  .error-text { color: var(--coral); font-size: 13px; }
+  .judge-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--surface-border); display: flex; gap: 10px; align-items: flex-start; }
   .judge-score {
-    flex-shrink: 0;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--surface-3);
-    border: 2px solid var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 14px;
-    font-family: var(--mono);
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--surface-3);
+    border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; font-family: var(--mono);
   }
   .judge-critique { font-size: 12.5px; color: var(--text-dim); line-height: 1.4; padding-top: 2px; }
-
-  .spinner {
-    width: 16px; height: 16px;
-    border: 2px solid var(--surface-3);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: inline-block;
-  }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--surface-3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ---------- Bottom action bar ---------- */
+  /* ---------- Bottom command bar (Layer 2) ---------- */
   .bottom-bar {
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-    background: rgba(20,20,22,0.82);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    backdrop-filter: blur(20px) saturate(150%);
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 10px;
-    z-index: 40;
+    position: fixed; left: 0; right: 0; bottom: 0;
+    max-width: 480px; margin: 0 auto;
+    padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(28,28,30,0.85);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex; gap: 10px; z-index: 50;
   }
-  .btn {
-    min-height: 48px;
-    border-radius: var(--radius-m);
-    border: none;
-    font-size: 15px;
-    font-weight: 600;
-    display: flex; align-items: center; justify-content: center;
-    gap: 8px;
-  }
+  .btn { min-height: 48px; border-radius: var(--radius-input); border: none; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.5; }
-  .btn-primary {
-    flex: 1;
-    background: var(--accent);
-    color: #00221f;
-  }
-  .btn-secondary {
-    width: 110px;
-    background: var(--surface-2);
-    color: var(--text);
-    border: 1px solid var(--border-strong);
-  }
+  .btn-primary { flex: 1 1 65%; background: var(--accent); color: var(--accent-ink); }
+  .btn-secondary { flex: 0 0 35%; background: var(--surface-2); color: var(--text); border: 1px solid rgba(255,255,255,0.14); }
 
-  /* ---------- Modal (settings) ---------- */
+  /* ---------- Sheets (Layer 3) ---------- */
   .sheet-backdrop {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: 60;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .2s;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
   }
   .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
-
   .sheet {
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
-    max-width: 480px;
-    margin: 0 auto;
+    position: fixed; left: 0; right: 0; bottom: 0;
+    max-width: 480px; margin: 0 auto;
     background: var(--surface);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border: 1px solid var(--border-strong);
-    border-bottom: none;
-    padding: 10px 18px calc(20px + env(safe-area-inset-bottom));
-    z-index: 61;
-    transform: translateY(100%);
-    transition: transform .25s cubic-bezier(.32,.72,0,1);
-    max-height: 82vh;
-    max-height: 82dvh;
-    overflow-y: auto;
+    border-top-left-radius: 20px; border-top-right-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.12); border-bottom: none;
+    padding: 8px 18px calc(20px + env(safe-area-inset-bottom));
+    z-index: 101; transform: translateY(100%); transition: transform .25s cubic-bezier(.32,.72,0,1);
+    max-height: 85vh; max-height: 85dvh; overflow-y: auto; display: flex; flex-direction: column;
   }
   .sheet.open { transform: translateY(0); }
-
-  .sheet-handle {
-    width: 36px; height: 5px;
-    background: var(--surface-3);
-    border-radius: 3px;
-    margin: 6px auto 14px;
-  }
+  .sheet-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.3); border-radius: 3px; margin: 8px auto 14px; flex-shrink: 0; }
   .sheet h2 { font-size: 18px; margin: 0 0 4px; }
   .sheet p.hint { font-size: 12.5px; color: var(--text-dim); margin: 0 0 16px; line-height: 1.45; }
-  .sheet label.field-label { font-size: 12.5px; color: var(--text-dim); font-weight: 600; display:block; margin: 14px 0 6px 2px; }
-
-  .sheet-actions { margin-top: 20px; display: flex; gap: 10px; }
+  .sheet label.field-label { font-size: 12.5px; color: var(--text-dim); font-weight: 600; display: block; margin: 14px 0 6px 2px; }
+  .sheet-actions { margin-top: 20px; display: flex; gap: 10px; flex-shrink: 0; }
   .sheet-actions .btn { flex: 1; }
 
-  /* History list inside drawer */
   .history-item {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-m);
-    padding: 12px 14px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    min-height: 44px;
+    background: var(--surface-2); border: 1px solid var(--surface-border); border-radius: var(--radius-input);
+    padding: 12px 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 44px;
   }
   .history-item .h-meta { font-size: 13px; }
   .history-item .h-time { color: var(--text-dim); font-size: 11.5px; margin-top: 2px; }
-  .history-item .h-load-btn {
-    background: var(--surface-3);
-    border: none;
-    color: var(--accent);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 8px 12px;
-    border-radius: var(--radius-s);
-    min-height: 36px;
-  }
+  .history-item .h-load-btn { background: var(--surface-3); border: none; color: var(--accent); font-size: 13px; font-weight: 600; padding: 8px 12px; border-radius: var(--radius-input); min-height: 36px; }
   .history-empty { color: var(--text-faint); font-size: 13px; text-align: center; padding: 24px 0; }
 
+  /* Model picker sheet */
+  #pickerSheet { padding-left: 0; padding-right: 0; }
+  #pickerSheet .sheet-handle { margin-bottom: 10px; }
+  #pickerSheet h2, #pickerSheet .picker-search-wrap { padding: 0 18px; }
+  .picker-search-wrap { margin-bottom: 8px; }
+  .picker-list { overflow-y: auto; flex: 1; padding: 0 10px 10px; }
+  .picker-group-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-faint); padding: 10px 8px 4px;
+  }
+  .picker-item {
+    width: 100%; text-align: left; background: transparent; border: none; border-radius: var(--radius-input);
+    padding: 10px 8px; min-height: 44px; display: flex; flex-direction: column; justify-content: center;
+  }
+  .picker-item:active { background: var(--surface-2); }
+  .picker-item.selected { background: rgba(48,209,88,0.12); }
+  .picker-item .pi-name { font-size: 14.5px; font-weight: 500; }
+  .picker-item .pi-meta { font-size: 11px; color: var(--text-faint); margin-top: 2px; font-family: var(--mono); }
+  .picker-empty { text-align: center; color: var(--text-faint); font-size: 13px; padding: 30px 0; }
+
   .toast {
-    position: fixed;
-    bottom: calc(var(--bar-h) + env(safe-area-inset-bottom) + 14px);
-    left: 50%;
+    position: fixed; bottom: calc(var(--bar-h) + env(safe-area-inset-bottom) + 14px); left: 50%;
     transform: translateX(-50%) translateY(8px);
-    background: var(--surface-3);
-    border: 1px solid var(--border-strong);
-    color: var(--text);
-    font-size: 13px;
-    padding: 10px 16px;
-    border-radius: 999px;
-    z-index: 80;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .2s, transform .2s;
-    max-width: 90%;
-    text-align: center;
+    background: var(--surface-3); border: 1px solid rgba(255,255,255,0.14); color: var(--text);
+    font-size: 13px; padding: 10px 16px; border-radius: var(--radius-pill); z-index: 120;
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; max-width: 90%; text-align: center;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
@@ -436,51 +276,62 @@
 <body>
 
   <header class="topbar">
-    <h1>Bench Sandbox</h1>
-    <div class="header-actions">
-      <button class="icon-btn" id="historyBtn" aria-label="Run history">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v6h6"/><path d="M3.5 13a8.5 8.5 0 1 0 2.5-6.5L3 9"/><path d="M12 8v5l3 2"/></svg>
-      </button>
-      <button class="icon-btn" id="settingsBtn" aria-label="Settings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>
-      </button>
+    <button class="icon-btn" id="historyBtn" aria-label="Run history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v6h6"/><path d="M3.5 13a8.5 8.5 0 1 0 2.5-6.5L3 9"/><path d="M12 8v5l3 2"/></svg>
+    </button>
+    <div class="title-block">
+      <h1>Bench Sandbox</h1>
+      <span class="status-pill" id="statusPill">⚪ Loading models…</span>
     </div>
+    <button class="icon-btn" id="settingsBtn" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/></svg>
+    </button>
   </header>
 
   <main>
     <section>
       <div class="section-label">Preset test case</div>
       <div class="preset-row">
-        <select id="datasetSelect">
-          <option value="">Custom / blank</option>
-        </select>
+        <select id="datasetSelect"><option value="">Custom / blank</option></select>
       </div>
     </section>
 
     <section>
-      <div class="section-label">System prompt</div>
+      <div class="section-label">System instructions</div>
       <textarea id="systemPrompt" placeholder="Instructions the model should follow…" rows="4"></textarea>
     </section>
 
     <section>
-      <div class="section-label">Test dataset</div>
-      <textarea id="testDataset" placeholder="The dynamic input / payload to run through each model…" rows="5"></textarea>
+      <div class="section-label">Test dataset / user payload</div>
+      <textarea id="testDataset" placeholder="The dynamic input to run through each model…" rows="5"></textarea>
     </section>
 
     <section>
       <div class="section-label">Models to race</div>
-      <div class="model-slot">
-        <div class="slot-label">Model A</div>
-        <select id="modelSelectA"></select>
-      </div>
-      <div class="model-slot">
-        <div class="slot-label">Model B</div>
-        <select id="modelSelectB"></select>
-      </div>
-      <div class="model-slot">
-        <div class="slot-label">Model C</div>
-        <select id="modelSelectC"></select>
-      </div>
+      <button class="model-slot" data-slot="A" id="slotBtnA">
+        <div>
+          <div class="slot-label">Model A</div>
+          <div class="slot-name" id="slotNameA">Loading…</div>
+          <div class="slot-meta"><span class="badge" id="slotBadgeA">—</span><span class="badge" id="slotCtxA">—</span></div>
+        </div>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+      <button class="model-slot" data-slot="B" id="slotBtnB">
+        <div>
+          <div class="slot-label">Model B</div>
+          <div class="slot-name" id="slotNameB">Loading…</div>
+          <div class="slot-meta"><span class="badge" id="slotBadgeB">—</span><span class="badge" id="slotCtxB">—</span></div>
+        </div>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+      <button class="model-slot" data-slot="C" id="slotBtnC">
+        <div>
+          <div class="slot-label">Model C</div>
+          <div class="slot-name" id="slotNameC">Loading…</div>
+          <div class="slot-meta"><span class="badge" id="slotBadgeC">—</span><span class="badge" id="slotCtxC">—</span></div>
+        </div>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
     </section>
 
     <section>
@@ -488,20 +339,25 @@
         <label for="autoEvalToggle">Auto-evaluate outputs (LLM-as-judge)</label>
         <div class="switch">
           <input type="checkbox" id="autoEvalToggle">
-          <div class="track"></div>
-          <div class="knob"></div>
+          <div class="track"></div><div class="knob"></div>
         </div>
       </div>
       <div class="judge-select-wrap hidden" id="judgeSelectWrap">
-        <label class="field-label" for="judgeModelSelect" style="margin-top:10px;">Judge model</label>
-        <select id="judgeModelSelect"></select>
+        <button class="model-slot" data-slot="J" id="slotBtnJ" style="margin-top:8px;">
+          <div>
+            <div class="slot-label">Judge model</div>
+            <div class="slot-name" id="slotNameJ">Loading…</div>
+            <div class="slot-meta"><span class="badge" id="slotBadgeJ">—</span><span class="badge" id="slotCtxJ">—</span></div>
+          </div>
+          <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
       </div>
     </section>
 
     <section>
       <div class="section-label">Results</div>
       <div id="results">
-        <div class="empty-state">Run a benchmark to see responses, latency, and estimated cost side by side.</div>
+        <div class="empty-state">Run a benchmark to see responses, latency, and live cost side by side.</div>
       </div>
     </section>
   </main>
@@ -515,18 +371,23 @@
   <div class="sheet-backdrop" id="settingsBackdrop"></div>
   <div class="sheet" id="settingsSheet">
     <div class="sheet-handle"></div>
-    <h2>API Keys</h2>
-    <p class="hint">Keys are stored only in this browser's localStorage — never sent anywhere except directly to each provider (or to OpenRouter, see below). Clearing browser data clears them.</p>
-
-    <label class="field-label" for="openaiKey">OpenAI API key</label>
-    <input type="password" id="openaiKey" placeholder="sk-…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-
-    <label class="field-label" for="googleKey">Google Gemini API key</label>
-    <input type="password" id="googleKey" placeholder="AIza…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <h2>Settings</h2>
+    <p class="hint">Keys are stored only in this browser's localStorage. By default every model is called through OpenRouter (that's where the live catalog comes from). Adding an OpenAI or Google key routes matching models directly to save the OpenRouter markup — Claude, DeepSeek, and Qwen always go through OpenRouter since their native APIs block browser requests.</p>
 
     <label class="field-label" for="openrouterKey">OpenRouter API key</label>
     <input type="password" id="openrouterKey" placeholder="sk-or-…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-    <p class="hint">Claude and Chinese models (DeepSeek, Qwen) are routed through OpenRouter — Anthropic's API doesn't allow direct browser requests (no CORS), and OpenRouter gives one consistent, browser-friendly endpoint for those providers.</p>
+
+    <label class="field-label" for="openaiKey">OpenAI API key (optional, direct routing)</label>
+    <input type="password" id="openaiKey" placeholder="sk-…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+
+    <label class="field-label" for="googleKey">Google Gemini API key (optional, direct routing)</label>
+    <input type="password" id="googleKey" placeholder="AIza…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+
+    <label class="field-label">Model catalog</label>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-secondary" id="forceRefreshBtn" style="flex:1; width:auto;">Force Refresh Models</button>
+      <button class="btn btn-secondary" id="clearCacheBtn" style="flex:1; width:auto; color:var(--coral);">Clear App Cache</button>
+    </div>
 
     <div class="sheet-actions">
       <button class="btn btn-secondary" id="closeSettingsBtn" style="width:auto;">Close</button>
@@ -539,480 +400,547 @@
   <div class="sheet" id="historySheet">
     <div class="sheet-handle"></div>
     <h2>Run History</h2>
-    <p class="hint">Your last 5 benchmark runs, stored locally. Tap Load to review a run without calling any API again.</p>
+    <p class="hint">Your last 5 benchmark runs, stored locally. Load a run to review it without calling any API again.</p>
     <div id="historyList"></div>
     <div class="sheet-actions">
       <button class="btn btn-secondary" id="closeHistoryBtn" style="width:auto;">Close</button>
-      <button class="btn btn-secondary" id="clearHistoryBtn" style="width:auto; color:var(--danger);">Clear History</button>
+      <button class="btn btn-secondary" id="clearHistoryBtn" style="width:auto; color:var(--coral);">Clear History</button>
     </div>
+  </div>
+
+  <!-- Model picker sheet (shared by slots A/B/C/Judge) -->
+  <div class="sheet-backdrop" id="pickerBackdrop"></div>
+  <div class="sheet" id="pickerSheet">
+    <div class="sheet-handle"></div>
+    <h2 id="pickerTitle">Choose a model</h2>
+    <div class="picker-search-wrap">
+      <input type="search" id="pickerSearch" placeholder="Search by name or provider…" autocapitalize="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="picker-list" id="pickerList"></div>
   </div>
 
   <div class="toast" id="toast"></div>
 
-  <script src="export.js"></script>
-  <script src="eval.js"></script>
-  <script>
-  (function () {
-    "use strict";
+<script>
+(function () {
+  "use strict";
 
-    // ---------------- State ----------------
-    let PRICING = null;       // parsed pricing.json .models
-    let DATASETS = [];        // parsed datasets.json .presets
-    let lastRun = null;       // most recently completed run object
-    let history = [];         // last 5 runs, newest first
+  // ================= Config that doesn't need a build step =================
+  const CACHE_KEY = "llm_models_cache";
+  const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+  const DEFAULT_IDS = { A: "openai/gpt-4o-mini", B: "anthropic/claude-3.5-sonnet", C: "google/gemini-flash-1.5", J: "openai/gpt-4o" };
 
-    const els = {
-      datasetSelect: document.getElementById("datasetSelect"),
-      systemPrompt: document.getElementById("systemPrompt"),
-      testDataset: document.getElementById("testDataset"),
-      modelA: document.getElementById("modelSelectA"),
-      modelB: document.getElementById("modelSelectB"),
-      modelC: document.getElementById("modelSelectC"),
-      judgeSelect: document.getElementById("judgeModelSelect"),
-      judgeWrap: document.getElementById("judgeSelectWrap"),
-      autoEval: document.getElementById("autoEvalToggle"),
-      results: document.getElementById("results"),
-      runBtn: document.getElementById("runBtn"),
-      exportBtn: document.getElementById("exportBtn"),
-      toast: document.getElementById("toast"),
+  const DATASETS = [
+    { id: "ad-copy", name: "Ad Copy Generation",
+      systemPrompt: "You are a senior direct-response copywriter. Write 3 short ad headline + body variations (headline under 8 words, body under 30 words) for the product below. Match the tone to the target audience. Return them as a numbered list, nothing else.",
+      testDataset: "Product: FocusBand — a vibrating wristband that gently buzzes when it detects you've been scrolling your phone for more than 10 minutes.\nAudience: remote workers aged 25-40 who complain about doomscrolling.\nTone: witty, a little self-aware, not preachy.\nPrice: $39." },
+    { id: "lead-scoring", name: "Inbound Lead Scoring",
+      systemPrompt: "You are a B2B SDR assistant. Read the inbound message and score the lead from 1-100 on purchase intent, then give a one-line reason and a recommended next action (reply, nurture, or disqualify). Output as JSON: {\"score\": number, \"reason\": string, \"action\": string}.",
+      testDataset: "From: jordan.reyes@midsizeretail.com\nSubject: Question about enterprise pricing\n\nHi, we're evaluating tools like yours for our 40-person ops team. We currently use a competitor but our contract renews in 6 weeks and honestly we're not happy with their support. Could someone walk me through your enterprise tier and SSO support? Would like to move fast if it's a good fit." },
+    { id: "json-extraction", name: "JSON Data Extraction",
+      systemPrompt: "Extract structured data from the email below. Return ONLY valid JSON matching this schema: {\"sender_company\": string, \"requested_items\": string[], \"quantity_total\": number, \"deadline\": string|null, \"budget_mentioned\": string|null}. If a field isn't present, use null.",
+      testDataset: "Hey team,\n\nThis is Priya from Northwind Logistics. We need to place an order for 120 pallet wrap rolls and 40 corner protectors before the end of the month since our current stock runs out on the 30th. Budget-wise we're capped around $6,500 for this order. Let me know if that works.\n\nThanks,\nPriya" },
+    { id: "support-tone", name: "Customer Support Tone Revision",
+      systemPrompt: "You are a customer support lead. Rewrite the draft reply below so it's calm, empathetic, and de-escalating, while still holding the line on policy. Keep it under 120 words. Do not over-apologize or make promises we can't keep.",
+      testDataset: "Angry customer ticket: \"This is the THIRD time my order has shipped late and nobody has bothered to tell me anything. I want a full refund AND compensation for my time. If I don't hear back today I'm disputing the charge and leaving reviews everywhere.\"\n\nDraft reply to revise: \"Sorry about that. Refunds take 5-7 business days. We don't offer compensation for shipping delays per policy. Let us know if you have other questions.\"" },
+    { id: "meeting-summary", name: "Summarization & Action Items",
+      systemPrompt: "Summarize the meeting transcript in 3 sentences, then list action items as \"- [Owner] Task (due date if mentioned)\". Be concise and only include commitments that were actually stated.",
+      testDataset: "Transcript excerpt:\nMAYA: Okay so where are we on the Q3 launch page?\nDAN: Copy's done, I sent it to Priya yesterday for review.\nPRIYA: Got it, I'll have feedback back to Dan by Thursday.\nMAYA: Great. And the pricing table redesign?\nSAM: Still blocked on the new tier names from finance. I'll ping them today.\nMAYA: Okay, let's regroup Friday. Dan, can you also loop in design for the hero image once copy's locked?\nDAN: Yep, will do after Priya's review." }
+  ];
 
-      settingsBtn: document.getElementById("settingsBtn"),
-      settingsSheet: document.getElementById("settingsSheet"),
-      settingsBackdrop: document.getElementById("settingsBackdrop"),
-      closeSettingsBtn: document.getElementById("closeSettingsBtn"),
-      saveSettingsBtn: document.getElementById("saveSettingsBtn"),
-      openaiKey: document.getElementById("openaiKey"),
-      googleKey: document.getElementById("googleKey"),
-      openrouterKey: document.getElementById("openrouterKey"),
+  // ================= State =================
+  let catalog = [];        // [{id, name, provider, context, promptPrice, completionPrice}]
+  let selected = { A: null, B: null, C: null, J: null };
+  let activeSlot = null;    // which slot the picker sheet is currently editing
+  let lastRun = null;
+  let history = [];
 
-      historyBtn: document.getElementById("historyBtn"),
-      historySheet: document.getElementById("historySheet"),
-      historyBackdrop: document.getElementById("historyBackdrop"),
-      closeHistoryBtn: document.getElementById("closeHistoryBtn"),
-      clearHistoryBtn: document.getElementById("clearHistoryBtn"),
-      historyList: document.getElementById("historyList")
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    statusPill: $("statusPill"),
+    datasetSelect: $("datasetSelect"),
+    systemPrompt: $("systemPrompt"),
+    testDataset: $("testDataset"),
+    autoEval: $("autoEvalToggle"),
+    judgeWrap: $("judgeSelectWrap"),
+    results: $("results"),
+    runBtn: $("runBtn"),
+    exportBtn: $("exportBtn"),
+    toast: $("toast"),
+
+    settingsBtn: $("settingsBtn"), settingsSheet: $("settingsSheet"), settingsBackdrop: $("settingsBackdrop"),
+    closeSettingsBtn: $("closeSettingsBtn"), saveSettingsBtn: $("saveSettingsBtn"),
+    openaiKey: $("openaiKey"), googleKey: $("googleKey"), openrouterKey: $("openrouterKey"),
+    forceRefreshBtn: $("forceRefreshBtn"), clearCacheBtn: $("clearCacheBtn"),
+
+    historyBtn: $("historyBtn"), historySheet: $("historySheet"), historyBackdrop: $("historyBackdrop"),
+    closeHistoryBtn: $("closeHistoryBtn"), clearHistoryBtn: $("clearHistoryBtn"), historyList: $("historyList"),
+
+    pickerBackdrop: $("pickerBackdrop"), pickerSheet: $("pickerSheet"), pickerTitle: $("pickerTitle"),
+    pickerSearch: $("pickerSearch"), pickerList: $("pickerList")
+  };
+
+  // ================= Utilities =================
+  function showToast(msg, ms = 2400) {
+    els.toast.textContent = msg;
+    els.toast.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => els.toast.classList.remove("show"), ms);
+  }
+  function estimateTokens(text) { return text ? Math.max(1, Math.ceil(text.length / 4)) : 0; }
+  function formatCtx(n) { if (!n) return "—"; return n >= 1000 ? Math.round(n / 1000) + "K ctx" : n + " ctx"; }
+  function getApiKeys() {
+    return {
+      openai: localStorage.getItem("bench_openai_key") || "",
+      google: localStorage.getItem("bench_google_key") || "",
+      openrouter: localStorage.getItem("bench_openrouter_key") || ""
     };
+  }
+  function openSheet(sheet, backdrop) { backdrop.classList.add("open"); sheet.classList.add("open"); }
+  function closeSheet(sheet, backdrop) { backdrop.classList.remove("open"); sheet.classList.remove("open"); }
+  function escapeHtml(str) { const d = document.createElement("div"); d.textContent = str == null ? "" : String(str); return d.innerHTML; }
 
-    // ---------------- Utilities ----------------
-    function showToast(msg, ms = 2200) {
-      els.toast.textContent = msg;
-      els.toast.classList.add("show");
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => els.toast.classList.remove("show"), ms);
-    }
-
-    function estimateTokens(text) {
-      // Lightweight heuristic for English text: ~4 characters per token.
-      if (!text) return 0;
-      return Math.max(1, Math.ceil(text.length / 4));
-    }
-
-    function estimateCost(modelKey, inputTokens, outputTokens) {
-      const cfg = PRICING[modelKey];
-      if (!cfg) return 0;
-      return (inputTokens / 1e6) * cfg.inputPricePerM + (outputTokens / 1e6) * cfg.outputPricePerM;
-    }
-
-    function getApiKeys() {
-      return {
-        openai: localStorage.getItem("bench_openai_key") || "",
-        google: localStorage.getItem("bench_google_key") || "",
-        openrouter: localStorage.getItem("bench_openrouter_key") || ""
-      };
-    }
-
-    function openSheet(sheetEl, backdropEl) {
-      backdropEl.classList.add("open");
-      sheetEl.classList.add("open");
-    }
-    function closeSheet(sheetEl, backdropEl) {
-      backdropEl.classList.remove("open");
-      sheetEl.classList.remove("open");
-    }
-
-    // ---------------- Init: load config ----------------
-    async function loadConfig() {
-      try {
-        const [pricingRes, datasetsRes] = await Promise.all([
-          fetch("pricing.json"),
-          fetch("datasets.json")
-        ]);
-        const pricingJson = await pricingRes.json();
-        const datasetsJson = await datasetsRes.json();
-        PRICING = pricingJson.models;
-        DATASETS = datasetsJson.presets;
-      } catch (err) {
-        showToast("Couldn't load pricing.json / datasets.json");
-        PRICING = {};
-        DATASETS = [];
-      }
-      populateModelSelects();
-      populateDatasetSelect();
-      populateJudgeSelect();
-    }
-
-    function populateModelSelects() {
-      const keys = Object.keys(PRICING);
-      const defaults = ["gpt-4o-mini", "claude-3-5-sonnet", "gemini-1-5-flash"];
-      [els.modelA, els.modelB, els.modelC].forEach((sel, i) => {
-        sel.innerHTML = "";
-        keys.forEach((key) => {
-          const opt = document.createElement("option");
-          opt.value = key;
-          opt.textContent = PRICING[key].label;
-          sel.appendChild(opt);
-        });
-        const fallback = defaults[i] && keys.includes(defaults[i]) ? defaults[i] : keys[i % keys.length];
-        if (fallback) sel.value = fallback;
-      });
-    }
-
-    function populateJudgeSelect() {
-      const keys = Object.keys(PRICING);
-      els.judgeSelect.innerHTML = "";
-      keys.forEach((key) => {
-        const opt = document.createElement("option");
-        opt.value = key;
-        opt.textContent = PRICING[key].label;
-        els.judgeSelect.appendChild(opt);
-      });
-      if (keys.includes("gpt-4o")) els.judgeSelect.value = "gpt-4o";
-    }
-
-    function populateDatasetSelect() {
-      els.datasetSelect.innerHTML = '<option value="">Custom / blank</option>';
-      DATASETS.forEach((d) => {
-        const opt = document.createElement("option");
-        opt.value = d.id;
-        opt.textContent = d.name;
-        els.datasetSelect.appendChild(opt);
-      });
-    }
-
-    els.datasetSelect.addEventListener("change", () => {
-      const preset = DATASETS.find((d) => d.id === els.datasetSelect.value);
-      if (!preset) return;
-      els.systemPrompt.value = preset.systemPrompt;
-      els.testDataset.value = preset.testDataset;
-    });
-
-    els.autoEval.addEventListener("change", () => {
-      els.judgeWrap.classList.toggle("hidden", !els.autoEval.checked);
-    });
-
-    // ---------------- Settings sheet ----------------
-    els.settingsBtn.addEventListener("click", () => {
-      const keys = getApiKeys();
-      els.openaiKey.value = keys.openai;
-      els.googleKey.value = keys.google;
-      els.openrouterKey.value = keys.openrouter;
-      openSheet(els.settingsSheet, els.settingsBackdrop);
-    });
-    els.closeSettingsBtn.addEventListener("click", () => closeSheet(els.settingsSheet, els.settingsBackdrop));
-    els.settingsBackdrop.addEventListener("click", () => closeSheet(els.settingsSheet, els.settingsBackdrop));
-    els.saveSettingsBtn.addEventListener("click", () => {
-      localStorage.setItem("bench_openai_key", els.openaiKey.value.trim());
-      localStorage.setItem("bench_google_key", els.googleKey.value.trim());
-      localStorage.setItem("bench_openrouter_key", els.openrouterKey.value.trim());
-      closeSheet(els.settingsSheet, els.settingsBackdrop);
-      showToast("Keys saved");
-    });
-
-    // ---------------- History sheet ----------------
-    function loadHistory() {
-      try {
-        history = JSON.parse(localStorage.getItem("bench_history") || "[]");
-      } catch {
-        history = [];
-      }
-    }
-    function persistHistory() {
-      localStorage.setItem("bench_history", JSON.stringify(history.slice(0, 5)));
-    }
-    function renderHistory() {
-      els.historyList.innerHTML = "";
-      if (!history.length) {
-        els.historyList.innerHTML = '<div class="history-empty">No runs yet.</div>';
+  // ================= Dynamic OpenRouter catalog =================
+  async function loadCatalog(forceRefresh) {
+    if (!forceRefresh) {
+      const cached = readCache();
+      if (cached) {
+        catalog = cached.models;
+        setStatus(`🟡 ${catalog.length}+ models (cached)`);
+        finishCatalogLoad();
         return;
       }
-      history.forEach((run, idx) => {
-        const item = document.createElement("div");
-        item.className = "history-item";
-        const modelNames = run.results.map((r) => r.label).join(" · ");
-        const time = new Date(run.timestamp).toLocaleString();
-        item.innerHTML = `
-          <div class="h-meta">
-            <div>${modelNames}</div>
-            <div class="h-time">${time}</div>
-          </div>
-          <button class="h-load-btn" data-idx="${idx}">Load</button>
-        `;
-        els.historyList.appendChild(item);
-      });
-      els.historyList.querySelectorAll(".h-load-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const run = history[Number(btn.dataset.idx)];
-          if (!run) return;
-          lastRun = run;
-          els.systemPrompt.value = run.systemPrompt;
-          els.testDataset.value = run.testDataset;
-          renderResults(run.results, false);
-          els.exportBtn.disabled = false;
-          closeSheet(els.historySheet, els.historyBackdrop);
-          showToast("Loaded past run (no API calls made)");
-        });
-      });
+    }
+    setStatus("⚪ Loading models…");
+    try {
+      const res = await fetch("https://openrouter.ai/api/v1/models");
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      catalog = (data.data || []).map((m) => ({
+        id: m.id,
+        name: m.name || m.id,
+        provider: (m.id.split("/")[0] || "other"),
+        context: m.context_length || m.top_provider?.context_length || 0,
+        promptPrice: parseFloat(m.pricing?.prompt || 0),
+        completionPrice: parseFloat(m.pricing?.completion || 0)
+      })).sort((a, b) => a.provider.localeCompare(b.provider) || a.name.localeCompare(b.name));
+      writeCache(catalog);
+      setStatus(`🟢 ${catalog.length}+ Models Live`);
+    } catch (err) {
+      const cached = readCache(true);
+      if (cached) {
+        catalog = cached.models;
+        setStatus(`🟡 Using cached catalog (${catalog.length})`);
+        showToast("Couldn't refresh live catalog, using cache");
+      } else {
+        catalog = [];
+        setStatus("🔴 Catalog unavailable");
+        showToast("Couldn't load OpenRouter model catalog");
+      }
+    }
+    finishCatalogLoad();
+  }
+
+  function readCache(ignoreExpiry) {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!ignoreExpiry && Date.now() - parsed.ts > CACHE_TTL_MS) return null;
+      return parsed;
+    } catch { return null; }
+  }
+  function writeCache(models) {
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), models })); } catch {}
+  }
+  function setStatus(text) { els.statusPill.textContent = text; }
+
+  function finishCatalogLoad() {
+    ["A", "B", "C", "J"].forEach((slot) => {
+      const def = catalog.find((m) => m.id === DEFAULT_IDS[slot]);
+      selected[slot] = def || catalog[0] || null;
+      renderSlot(slot);
+    });
+  }
+
+  function renderSlot(slot) {
+    const m = selected[slot];
+    $("slotName" + slot).textContent = m ? m.name : "No models loaded";
+    $("slotBadge" + slot).textContent = m ? m.provider : "—";
+    $("slotCtx" + slot).textContent = m ? formatCtx(m.context) : "—";
+  }
+
+  // ================= Model picker sheet =================
+  document.querySelectorAll(".model-slot").forEach((btn) => {
+    btn.addEventListener("click", () => openPicker(btn.dataset.slot));
+  });
+
+  function openPicker(slot) {
+    activeSlot = slot;
+    els.pickerTitle.textContent = slot === "J" ? "Choose judge model" : `Choose Model ${slot}`;
+    els.pickerSearch.value = "";
+    renderPickerList("");
+    openSheet(els.pickerSheet, els.pickerBackdrop);
+    setTimeout(() => els.pickerSearch.focus(), 250);
+  }
+
+  function renderPickerList(query) {
+    const q = query.trim().toLowerCase();
+    const filtered = !q ? catalog : catalog.filter((m) =>
+      m.name.toLowerCase().includes(q) || m.id.toLowerCase().includes(q) || m.provider.toLowerCase().includes(q)
+    );
+
+    if (!filtered.length) {
+      els.pickerList.innerHTML = '<div class="picker-empty">No models match.</div>';
+      return;
     }
 
-    els.historyBtn.addEventListener("click", () => {
-      renderHistory();
-      openSheet(els.historySheet, els.historyBackdrop);
+    let html = "";
+    let lastProvider = null;
+    filtered.forEach((m) => {
+      if (m.provider !== lastProvider) {
+        html += `<div class="picker-group-label">${escapeHtml(m.provider)}</div>`;
+        lastProvider = m.provider;
+      }
+      const isSelected = selected[activeSlot] && selected[activeSlot].id === m.id;
+      const priceNote = (m.promptPrice || m.completionPrice)
+        ? `$${(m.promptPrice * 1e6).toFixed(2)}/${(m.completionPrice * 1e6).toFixed(2)} per 1M in/out`
+        : "pricing n/a";
+      html += `
+        <button class="picker-item${isSelected ? " selected" : ""}" data-id="${escapeHtml(m.id)}">
+          <div class="pi-name">${escapeHtml(m.name)}</div>
+          <div class="pi-meta">${formatCtx(m.context)} · ${priceNote}</div>
+        </button>`;
     });
-    els.closeHistoryBtn.addEventListener("click", () => closeSheet(els.historySheet, els.historyBackdrop));
-    els.historyBackdrop.addEventListener("click", () => closeSheet(els.historySheet, els.historyBackdrop));
-    els.clearHistoryBtn.addEventListener("click", () => {
-      history = [];
-      persistHistory();
-      renderHistory();
-      showToast("History cleared");
+    els.pickerList.innerHTML = html;
+    els.pickerList.querySelectorAll(".picker-item").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const model = catalog.find((m) => m.id === btn.dataset.id);
+        if (model && activeSlot) {
+          selected[activeSlot] = model;
+          renderSlot(activeSlot);
+        }
+        closeSheet(els.pickerSheet, els.pickerBackdrop);
+      });
     });
+  }
+  els.pickerSearch.addEventListener("input", () => renderPickerList(els.pickerSearch.value));
+  els.pickerBackdrop.addEventListener("click", () => closeSheet(els.pickerSheet, els.pickerBackdrop));
 
-    // ---------------- Provider routing ----------------
-    // Returns { text, error }. Anthropic + DeepSeek + Qwen go through
-    // OpenRouter because their native APIs don't expose CORS to browsers.
-    async function callModel(modelKey, systemPrompt, userPrompt) {
-      const cfg = PRICING[modelKey];
-      if (!cfg) return { text: "", error: "Unknown model key" };
-      const keys = getApiKeys();
+  // ================= Preset dataset =================
+  DATASETS.forEach((d) => {
+    const opt = document.createElement("option");
+    opt.value = d.id; opt.textContent = d.name;
+    els.datasetSelect.appendChild(opt);
+  });
+  els.datasetSelect.addEventListener("change", () => {
+    const preset = DATASETS.find((d) => d.id === els.datasetSelect.value);
+    if (!preset) return;
+    els.systemPrompt.value = preset.systemPrompt;
+    els.testDataset.value = preset.testDataset;
+  });
 
+  els.autoEval.addEventListener("change", () => {
+    els.judgeWrap.classList.toggle("hidden", !els.autoEval.checked);
+  });
+
+  // ================= Settings sheet =================
+  els.settingsBtn.addEventListener("click", () => {
+    const keys = getApiKeys();
+    els.openaiKey.value = keys.openai;
+    els.googleKey.value = keys.google;
+    els.openrouterKey.value = keys.openrouter;
+    openSheet(els.settingsSheet, els.settingsBackdrop);
+  });
+  els.closeSettingsBtn.addEventListener("click", () => closeSheet(els.settingsSheet, els.settingsBackdrop));
+  els.settingsBackdrop.addEventListener("click", () => closeSheet(els.settingsSheet, els.settingsBackdrop));
+  els.saveSettingsBtn.addEventListener("click", () => {
+    localStorage.setItem("bench_openai_key", els.openaiKey.value.trim());
+    localStorage.setItem("bench_google_key", els.googleKey.value.trim());
+    localStorage.setItem("bench_openrouter_key", els.openrouterKey.value.trim());
+    closeSheet(els.settingsSheet, els.settingsBackdrop);
+    showToast("Keys saved");
+  });
+  els.forceRefreshBtn.addEventListener("click", async () => {
+    showToast("Refreshing model catalog…");
+    await loadCatalog(true);
+    showToast("Catalog refreshed");
+  });
+  els.clearCacheBtn.addEventListener("click", () => {
+    localStorage.removeItem(CACHE_KEY);
+    localStorage.removeItem("bench_history");
+    showToast("Cache cleared — reloading…");
+    setTimeout(() => location.reload(), 600);
+  });
+
+  // ================= History sheet =================
+  function loadHistory() {
+    try { history = JSON.parse(localStorage.getItem("bench_history") || "[]"); } catch { history = []; }
+  }
+  function persistHistory() { localStorage.setItem("bench_history", JSON.stringify(history.slice(0, 5))); }
+  function renderHistory() {
+    els.historyList.innerHTML = "";
+    if (!history.length) { els.historyList.innerHTML = '<div class="history-empty">No runs yet.</div>'; return; }
+    history.forEach((run, idx) => {
+      const item = document.createElement("div");
+      item.className = "history-item";
+      const names = run.results.map((r) => r.label).join(" · ");
+      item.innerHTML = `
+        <div class="h-meta"><div>${escapeHtml(names)}</div><div class="h-time">${new Date(run.timestamp).toLocaleString()}</div></div>
+        <button class="h-load-btn" data-idx="${idx}">Load</button>`;
+      els.historyList.appendChild(item);
+    });
+    els.historyList.querySelectorAll(".h-load-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const run = history[Number(btn.dataset.idx)];
+        if (!run) return;
+        lastRun = run;
+        els.systemPrompt.value = run.systemPrompt;
+        els.testDataset.value = run.testDataset;
+        renderResults(run.results);
+        els.exportBtn.disabled = false;
+        closeSheet(els.historySheet, els.historyBackdrop);
+        showToast("Loaded past run (no API calls made)");
+      });
+    });
+  }
+  els.historyBtn.addEventListener("click", () => { renderHistory(); openSheet(els.historySheet, els.historyBackdrop); });
+  els.closeHistoryBtn.addEventListener("click", () => closeSheet(els.historySheet, els.historyBackdrop));
+  els.historyBackdrop.addEventListener("click", () => closeSheet(els.historySheet, els.historyBackdrop));
+  els.clearHistoryBtn.addEventListener("click", () => { history = []; persistHistory(); renderHistory(); showToast("History cleared"); });
+
+  // ================= Provider routing =================
+  // Default: everything routes through OpenRouter (where the catalog comes from).
+  // If a direct OpenAI/Google key is set AND the model is from that provider,
+  // try direct first (cheaper, no OpenRouter markup) and fall back to
+  // OpenRouter automatically if the direct call errors.
+  async function directCallOpenAI(apiModel, sys, user, key) {
+    try {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${key}` },
+        body: JSON.stringify({ model: apiModel, messages: [{ role: "system", content: sys || "" }, { role: "user", content: user || "" }] })
+      });
+      const data = await res.json();
+      if (!res.ok) return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
+      return { text: data?.choices?.[0]?.message?.content || "" };
+    } catch (err) { return { text: "", error: err.message }; }
+  }
+  async function directCallGoogle(apiModel, sys, user, key) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${apiModel}:generateContent?key=${encodeURIComponent(key)}`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: sys ? { parts: [{ text: sys }] } : undefined,
+          contents: [{ role: "user", parts: [{ text: user || "" }] }]
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
+      const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
+      return { text };
+    } catch (err) { return { text: "", error: err.message }; }
+  }
+  async function callOpenRouter(fullId, sys, user, key) {
+    try {
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${key}`,
+          "HTTP-Referer": location.href,
+          "X-Title": "Prompt Benchmarking & Cost Analyzer Sandbox"
+        },
+        body: JSON.stringify({ model: fullId, messages: [{ role: "system", content: sys || "" }, { role: "user", content: user || "" }] })
+      });
+      const data = await res.json();
+      if (!res.ok) return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
+      return { text: data?.choices?.[0]?.message?.content || "" };
+    } catch (err) { return { text: "", error: err.message }; }
+  }
+
+  async function callModel(model, sys, user) {
+    const keys = getApiKeys();
+    let directAttempt = null;
+
+    if (model.provider === "openai" && keys.openai) {
+      directAttempt = await directCallOpenAI(model.id.replace(/^openai\//, ""), sys, user, keys.openai);
+      if (!directAttempt.error) return { ...directAttempt, routedVia: "openai (direct)" };
+    } else if (model.provider === "google" && keys.google) {
+      directAttempt = await directCallGoogle(model.id.replace(/^google\//, ""), sys, user, keys.google);
+      if (!directAttempt.error) return { ...directAttempt, routedVia: "google (direct)" };
+    }
+
+    if (keys.openrouter) {
+      const result = await callOpenRouter(model.id, sys, user, keys.openrouter);
+      return { ...result, routedVia: "openrouter" + (directAttempt ? " (fallback)" : "") };
+    }
+
+    return { text: "", error: directAttempt?.error || "Add an OpenRouter key in Settings to call this model." };
+  }
+
+  // ================= Results rendering =================
+  function renderLoadingCards(models) {
+    els.results.innerHTML = "";
+    models.forEach((m) => {
+      const card = document.createElement("div");
+      card.className = "result-card is-loading";
+      card.innerHTML = `
+        <div class="result-head">
+          <span class="model-name">${escapeHtml(m.name)}<div class="head-badges"><span class="badge">${escapeHtml(m.provider)}</span></div></span>
+          <span class="spinner"></span>
+        </div>
+        <div class="response-text">Waiting for response…</div>`;
+      els.results.appendChild(card);
+    });
+  }
+
+  function renderResults(results) {
+    els.results.innerHTML = "";
+    if (!results.length) {
+      els.results.innerHTML = '<div class="empty-state">Run a benchmark to see responses, latency, and live cost side by side.</div>';
+      return;
+    }
+    results.forEach((r) => {
+      const card = document.createElement("div");
+      card.className = "result-card" + (r.error ? " is-error" : "");
+      const body = r.error ? `<div class="error-text">${escapeHtml(r.error)}</div>` : `<div class="response-text">${escapeHtml(r.responseText)}</div>`;
+      const judgeHtml = r.judge
+        ? `<div class="judge-box"><div class="judge-score">${r.judge.score != null ? r.judge.score : "–"}</div><div class="judge-critique">${escapeHtml(r.judge.critique || "")}</div></div>`
+        : "";
+      card.innerHTML = `
+        <div class="result-head">
+          <span class="model-name">${escapeHtml(r.label)}<div class="head-badges"><span class="badge">${escapeHtml(r.provider)}</span><span class="badge">${escapeHtml(r.routedVia || "")}</span></div></span>
+          <span class="status-dot ${r.error ? "err" : "ok"}"></span>
+        </div>
+        <div class="metrics-row">
+          <span class="metric latency">latency <strong>${r.latencyMs != null ? r.latencyMs + "ms" : "—"}</strong></span>
+          <span class="metric tokens">tok in/out <strong>${r.inputTokensEst ?? "—"}/${r.outputTokensEst ?? "—"}</strong></span>
+          <span class="metric cost">cost <strong>$${r.costUsd != null ? r.costUsd.toFixed(5) : "—"}</strong></span>
+        </div>
+        ${body}
+        ${judgeHtml}`;
+      els.results.appendChild(card);
+    });
+  }
+
+  // ================= LLM-as-judge (inlined) =================
+  function buildRubricPrompt(sys, dataset, output) {
+    return [
+      "You are a strict but fair evaluator grading an AI model's response.",
+      "System prompt given to the model:", "---", sys || "(none)", "---",
+      "Input given to the model:", "---", dataset || "(none)", "---",
+      "The model's response:", "---", output || "(empty response)", "---",
+      "Score 1-10 on instruction-following, accuracy/usefulness, and whether formatting/tone fit the ask.",
+      'Reply with ONLY compact JSON, no markdown fences: {"score": <1-10 integer>, "critique": "<one sentence, under 25 words>"}'
+    ].join("\n");
+  }
+  function parseJudgeReply(raw) {
+    if (!raw) return { score: null, critique: "Judge returned no output." };
+    const cleaned = raw.trim().replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/, "");
+    try {
+      const parsed = JSON.parse(cleaned);
+      const score = Number(parsed.score);
+      return { score: Number.isFinite(score) ? Math.max(1, Math.min(10, Math.round(score))) : null, critique: String(parsed.critique || "").slice(0, 300) };
+    } catch {
+      const m = cleaned.match(/(\d{1,2})\s*\/\s*10|"score"\s*:\s*(\d{1,2})/);
+      const score = m ? Number(m[1] || m[2]) : null;
+      return { score: Number.isFinite(score) ? Math.max(1, Math.min(10, score)) : null, critique: cleaned.slice(0, 200) || "Could not parse judge output." };
+    }
+  }
+  async function evaluateWithJudge(judgeModel, sys, dataset, results) {
+    return Promise.all(results.map(async (r) => {
+      if (r.error || !r.responseText) return { score: null, critique: "Skipped — model errored, nothing to judge." };
+      const rubric = buildRubricPrompt(sys, dataset, r.responseText);
+      const reply = await callModel(judgeModel, "You are a precise, terse grading assistant.", rubric);
+      if (reply.error) return { score: null, critique: `Judge error: ${reply.error}` };
+      return parseJudgeReply(reply.text);
+    }));
+  }
+
+  // ================= CSV export (inlined) =================
+  function csvEscape(v) { const s = String(v ?? ""); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+  function runToCsv(run) {
+    const headers = ["Timestamp", "System Prompt", "Test Dataset", "Model", "Provider", "Routed Via", "Latency (ms)", "Est. Input Tokens", "Est. Output Tokens", "Est. Cost (USD)", "Judge Score", "Judge Critique", "Response", "Error"];
+    const rows = run.results.map((r) => [run.timestamp, run.systemPrompt, run.testDataset, r.label, r.provider, r.routedVia || "", r.latencyMs ?? "", r.inputTokensEst ?? "", r.outputTokensEst ?? "", r.costUsd != null ? r.costUsd.toFixed(6) : "", r.judge ? r.judge.score : "", r.judge ? r.judge.critique : "", r.responseText ?? "", r.error ?? ""]);
+    return [headers, ...rows].map((row) => row.map(csvEscape).join(",")).join("\n");
+  }
+  function downloadBlob(content, filename, mime) {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+  function exportRunAsCsv(run) {
+    const stamp = new Date(run.timestamp).toISOString().replace(/[:.]/g, "-");
+    downloadBlob(runToCsv(run), `benchmark-${stamp}.csv`, "text/csv");
+  }
+
+  // ================= Run benchmark =================
+  async function runBenchmark() {
+    const models = ["A", "B", "C"].map((s) => selected[s]).filter(Boolean);
+    if (models.length < 3) { showToast("Model catalog still loading — try again in a moment"); return; }
+
+    const sys = els.systemPrompt.value;
+    const dataset = els.testDataset.value;
+    if (!sys.trim() && !dataset.trim()) { showToast("Add a system prompt or test dataset first"); return; }
+
+    els.runBtn.disabled = true;
+    els.runBtn.textContent = "Running…";
+    renderLoadingCards(models);
+
+    const inputTokensEst = estimateTokens(sys) + estimateTokens(dataset);
+
+    const results = await Promise.all(models.map(async (m) => {
+      const start = performance.now();
+      const { text, error, routedVia } = await callModel(m, sys, dataset);
+      const latencyMs = Math.round(performance.now() - start);
+      const outputTokensEst = estimateTokens(text);
+      const costUsd = error ? 0 : inputTokensEst * m.promptPrice + outputTokensEst * m.completionPrice;
+      return { modelId: m.id, label: m.name, provider: m.provider, latencyMs, inputTokensEst, outputTokensEst, costUsd, responseText: text, error: error || null, routedVia, judge: null };
+    }));
+
+    renderResults(results);
+
+    if (els.autoEval.checked && selected.J) {
+      showToast("Judging outputs…");
       try {
-        if (cfg.provider === "openai") {
-          if (!keys.openai) return { text: "", error: "Missing OpenAI API key" };
-          const res = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${keys.openai}`
-            },
-            body: JSON.stringify({
-              model: cfg.apiModel,
-              messages: [
-                { role: "system", content: systemPrompt || "" },
-                { role: "user", content: userPrompt || "" }
-              ]
-            })
-          });
-          const data = await res.json();
-          if (!res.ok) return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
-          return { text: data?.choices?.[0]?.message?.content || "" };
-        }
-
-        if (cfg.provider === "google") {
-          if (!keys.google) return { text: "", error: "Missing Google Gemini API key" };
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${cfg.apiModel}:generateContent?key=${encodeURIComponent(keys.google)}`;
-          const res = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              systemInstruction: systemPrompt ? { parts: [{ text: systemPrompt }] } : undefined,
-              contents: [{ role: "user", parts: [{ text: userPrompt || "" }] }]
-            })
-          });
-          const data = await res.json();
-          if (!res.ok) return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
-          const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
-          return { text };
-        }
-
-        if (cfg.provider === "openrouter") {
-          if (!keys.openrouter) return { text: "", error: "Missing OpenRouter API key" };
-          const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${keys.openrouter}`,
-              "HTTP-Referer": location.href,
-              "X-Title": "Prompt Benchmarking & Cost Analyzer Sandbox"
-            },
-            body: JSON.stringify({
-              model: cfg.apiModel,
-              messages: [
-                { role: "system", content: systemPrompt || "" },
-                { role: "user", content: userPrompt || "" }
-              ]
-            })
-          });
-          const data = await res.json();
-          if (!res.ok) return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
-          return { text: data?.choices?.[0]?.message?.content || "" };
-        }
-
-        return { text: "", error: `Unknown provider: ${cfg.provider}` };
-      } catch (err) {
-        return { text: "", error: err.message || "Network error" };
-      }
+        const verdicts = await evaluateWithJudge(selected.J, sys, dataset, results);
+        verdicts.forEach((v, i) => { results[i].judge = v; });
+        renderResults(results);
+      } catch (err) { showToast("Judging failed: " + err.message); }
     }
 
-    // ---------------- Rendering ----------------
-    function providerTag(modelKey) {
-      const cfg = PRICING[modelKey];
-      if (!cfg) return "";
-      return cfg.provider === "openrouter" ? "via OpenRouter" : cfg.provider;
-    }
+    const run = { timestamp: new Date().toISOString(), systemPrompt: sys, testDataset: dataset, results };
+    lastRun = run;
+    history.unshift(run);
+    history = history.slice(0, 5);
+    persistHistory();
 
-    function renderLoadingCards(modelKeys) {
-      els.results.innerHTML = "";
-      modelKeys.forEach((key) => {
-        const cfg = PRICING[key];
-        const card = document.createElement("div");
-        card.className = "result-card is-loading";
-        card.id = `card-${key}`;
-        card.innerHTML = `
-          <div class="result-head">
-            <span class="model-name">${cfg ? cfg.label : key}<span class="provider-tag">${providerTag(key)}</span></span>
-            <span class="spinner"></span>
-          </div>
-          <div class="response-text">Waiting for response…</div>
-        `;
-        els.results.appendChild(card);
-      });
-    }
+    els.exportBtn.disabled = false;
+    els.runBtn.disabled = false;
+    els.runBtn.textContent = "Run Benchmark";
+  }
 
-    function renderResults(results, animateIn) {
-      els.results.innerHTML = "";
-      if (!results.length) {
-        els.results.innerHTML = '<div class="empty-state">Run a benchmark to see responses, latency, and estimated cost side by side.</div>';
-        return;
-      }
-      results.forEach((r) => {
-        const card = document.createElement("div");
-        card.className = "result-card" + (r.error ? " is-error" : "");
-        const body = r.error
-          ? `<div class="error-text">${escapeHtml(r.error)}</div>`
-          : `<div class="response-text">${escapeHtml(r.responseText)}</div>`;
+  els.runBtn.addEventListener("click", runBenchmark);
+  els.exportBtn.addEventListener("click", () => {
+    if (!lastRun) return;
+    exportRunAsCsv(lastRun);
+    showToast("CSV exported");
+  });
 
-        const judgeHtml = r.judge
-          ? `<div class="judge-box">
-               <div class="judge-score">${r.judge.score != null ? r.judge.score : "–"}</div>
-               <div class="judge-critique">${escapeHtml(r.judge.critique || "")}</div>
-             </div>`
-          : "";
+  // ================= Boot =================
+  loadHistory();
+  loadCatalog(false);
 
-        card.innerHTML = `
-          <div class="result-head">
-            <span class="model-name">${escapeHtml(r.label)}<span class="provider-tag">${providerTag(r.modelKey)}</span></span>
-          </div>
-          <div class="metrics-row">
-            <span class="metric latency">latency <strong>${r.latencyMs != null ? r.latencyMs + "ms" : "—"}</strong></span>
-            <span class="metric tokens">tok in/out <strong>${r.inputTokensEst ?? "—"}/${r.outputTokensEst ?? "—"}</strong></span>
-            <span class="metric cost">cost <strong>$${r.costUsd != null ? r.costUsd.toFixed(5) : "—"}</strong></span>
-          </div>
-          ${body}
-          ${judgeHtml}
-        `;
-        els.results.appendChild(card);
-      });
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement("div");
-      div.textContent = str == null ? "" : String(str);
-      return div.innerHTML;
-    }
-
-    // ---------------- Run benchmark ----------------
-    async function runBenchmark() {
-      const systemPrompt = els.systemPrompt.value;
-      const testDataset = els.testDataset.value;
-      const modelKeys = [els.modelA.value, els.modelB.value, els.modelC.value];
-
-      if (!testDataset.trim() && !systemPrompt.trim()) {
-        showToast("Add a system prompt or test dataset first");
-        return;
-      }
-
-      els.runBtn.disabled = true;
-      els.runBtn.textContent = "Running…";
-      renderLoadingCards(modelKeys);
-
-      const inputTokensEst = estimateTokens(systemPrompt) + estimateTokens(testDataset);
-
-      const jobs = modelKeys.map(async (modelKey) => {
-        const cfg = PRICING[modelKey];
-        const start = performance.now();
-        const { text, error } = await callModel(modelKey, systemPrompt, testDataset);
-        const latencyMs = Math.round(performance.now() - start);
-        const outputTokensEst = estimateTokens(text);
-        const costUsd = error ? 0 : estimateCost(modelKey, inputTokensEst, outputTokensEst);
-        return {
-          modelKey,
-          label: cfg ? cfg.label : modelKey,
-          latencyMs,
-          inputTokensEst,
-          outputTokensEst,
-          costUsd,
-          responseText: text,
-          error: error || null,
-          judge: null
-        };
-      });
-
-      const results = await Promise.all(jobs);
-      renderResults(results, true);
-
-      // Optional LLM-as-judge pass
-      if (els.autoEval.checked) {
-        showToast("Judging outputs…");
-        try {
-          const judgeModelKey = els.judgeSelect.value;
-          const judgeCaller = (modelKey, sys, user) => callModel(modelKey, sys, user);
-          const verdicts = await window.BenchEval.evaluateWithJudge({
-            judgeModelKey,
-            callModelFn: judgeCaller,
-            systemPrompt,
-            testDataset,
-            results
-          });
-          verdicts.forEach((v, i) => { results[i].judge = v; });
-          renderResults(results, false);
-        } catch (err) {
-          showToast("Judging failed: " + err.message);
-        }
-      }
-
-      const run = {
-        timestamp: new Date().toISOString(),
-        systemPrompt,
-        testDataset,
-        results
-      };
-      lastRun = run;
-      history.unshift(run);
-      history = history.slice(0, 5);
-      persistHistory();
-
-      els.exportBtn.disabled = false;
-      els.runBtn.disabled = false;
-      els.runBtn.textContent = "Run Benchmark";
-    }
-
-    els.runBtn.addEventListener("click", runBenchmark);
-    els.exportBtn.addEventListener("click", () => {
-      if (!lastRun) return;
-      window.BenchExport.exportRunAsCsv(lastRun);
-      showToast("CSV exported");
-    });
-
-    // ---------------- Boot ----------------
-    loadHistory();
-    loadConfig();
-
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("sw.js").catch(() => {});
-      });
-    }
-  })();
-  </script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+  }
+})();
+</script>
 </body>
 </html>
