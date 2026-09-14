@@ -1,0 +1,70 @@
+{
+  "_note": "Prices are USD per 1,000,000 tokens, current as of the last time you edited this file. Model lineups and rates move fast — check the provider's pricing page before trusting a run's cost estimate. provider must be one of: openai, google, openrouter.",
+  "_updated": "2026-09-14",
+  "models": {
+    "gpt-4o": {
+      "label": "GPT-4o",
+      "provider": "openai",
+      "apiModel": "gpt-4o",
+      "contextWindow": 128000,
+      "inputPricePerM": 2.50,
+      "outputPricePerM": 10.00
+    },
+    "gpt-4o-mini": {
+      "label": "GPT-4o mini",
+      "provider": "openai",
+      "apiModel": "gpt-4o-mini",
+      "contextWindow": 128000,
+      "inputPricePerM": 0.15,
+      "outputPricePerM": 0.60
+    },
+    "claude-3-5-sonnet": {
+      "label": "Claude 3.5 Sonnet",
+      "provider": "openrouter",
+      "apiModel": "anthropic/claude-3.5-sonnet",
+      "contextWindow": 200000,
+      "inputPricePerM": 3.00,
+      "outputPricePerM": 15.00
+    },
+    "claude-3-opus": {
+      "label": "Claude 3 Opus",
+      "provider": "openrouter",
+      "apiModel": "anthropic/claude-3-opus",
+      "contextWindow": 200000,
+      "inputPricePerM": 15.00,
+      "outputPricePerM": 75.00
+    },
+    "gemini-1-5-pro": {
+      "label": "Gemini 1.5 Pro",
+      "provider": "google",
+      "apiModel": "gemini-1.5-pro",
+      "contextWindow": 2000000,
+      "inputPricePerM": 1.25,
+      "outputPricePerM": 5.00
+    },
+    "gemini-1-5-flash": {
+      "label": "Gemini 1.5 Flash",
+      "provider": "google",
+      "apiModel": "gemini-1.5-flash",
+      "contextWindow": 1000000,
+      "inputPricePerM": 0.075,
+      "outputPricePerM": 0.30
+    },
+    "deepseek-v3": {
+      "label": "DeepSeek-V3",
+      "provider": "openrouter",
+      "apiModel": "deepseek/deepseek-chat",
+      "contextWindow": 64000,
+      "inputPricePerM": 0.27,
+      "outputPricePerM": 1.10
+    },
+    "qwen-max": {
+      "label": "Qwen-Max",
+      "provider": "openrouter",
+      "apiModel": "qwen/qwen-max",
+      "contextWindow": 32000,
+      "inputPricePerM": 1.60,
+      "outputPricePerM": 6.40
+    }
+  }
+}

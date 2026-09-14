@@ -1,0 +1,34 @@
+{
+  "presets": [
+    {
+      "id": "ad-copy",
+      "name": "Ad Copy Generation",
+      "systemPrompt": "You are a senior direct-response copywriter. Write 3 short ad headline + body variations (headline under 8 words, body under 30 words) for the product below. Match the tone to the target audience. Return them as a numbered list, nothing else.",
+      "testDataset": "Product: FocusBand — a vibrating wristband that gently buzzes when it detects you've been scrolling your phone for more than 10 minutes.\nAudience: remote workers aged 25-40 who complain about doomscrolling.\nTone: witty, a little self-aware, not preachy.\nPrice: $39."
+    },
+    {
+      "id": "lead-scoring",
+      "name": "Inbound Lead Scoring",
+      "systemPrompt": "You are a B2B SDR assistant. Read the inbound message and score the lead from 1-100 on purchase intent, then give a one-line reason and a recommended next action (reply, nurture, or disqualify). Output as JSON: {\"score\": number, \"reason\": string, \"action\": string}.",
+      "testDataset": "From: jordan.reyes@midsizeretail.com\nSubject: Question about enterprise pricing\n\nHi, we're evaluating tools like yours for our 40-person ops team. We currently use a competitor but our contract renews in 6 weeks and honestly we're not happy with their support. Could someone walk me through your enterprise tier and SSO support? Would like to move fast if it's a good fit."
+    },
+    {
+      "id": "json-extraction",
+      "name": "JSON Data Extraction",
+      "systemPrompt": "Extract structured data from the email below. Return ONLY valid JSON matching this schema: {\"sender_company\": string, \"requested_items\": string[], \"quantity_total\": number, \"deadline\": string|null, \"budget_mentioned\": string|null}. If a field isn't present, use null.",
+      "testDataset": "Hey team,\n\nThis is Priya from Northwind Logistics. We need to place an order for 120 pallet wrap rolls and 40 corner protectors before the end of the month since our current stock runs out on the 30th. Budget-wise we're capped around $6,500 for this order. Let me know if that works.\n\nThanks,\nPriya"
+    },
+    {
+      "id": "support-tone",
+      "name": "Customer Support Tone Revision",
+      "systemPrompt": "You are a customer support lead. Rewrite the draft reply below so it's calm, empathetic, and de-escalating, while still holding the line on policy. Keep it under 120 words. Do not over-apologize or make promises we can't keep.",
+      "testDataset": "Angry customer ticket: \"This is the THIRD time my order has shipped late and nobody has bothered to tell me anything. I want a full refund AND compensation for my time. If I don't hear back today I'm disputing the charge and leaving reviews everywhere.\"\n\nDraft reply to revise: \"Sorry about that. Refunds take 5-7 business days. We don't offer compensation for shipping delays per policy. Let us know if you have other questions.\""
+    },
+    {
+      "id": "meeting-summary",
+      "name": "Summarization & Action Items",
+      "systemPrompt": "Summarize the meeting transcript in 3 sentences, then list action items as \"- [Owner] Task (due date if mentioned)\". Be concise and only include commitments that were actually stated.",
+      "testDataset": "Transcript excerpt:\nMAYA: Okay so where are we on the Q3 launch page?\nDAN: Copy's done, I sent it to Priya yesterday for review.\nPRIYA: Got it, I'll have feedback back to Dan by Thursday.\nMAYA: Great. And the pricing table redesign?\nSAM: Still blocked on the new tier names from finance. I'll ping them today.\nMAYA: Okay, let's regroup Friday. Dan, can you also loop in design for the hero image once copy's locked?\nDAN: Yep, will do after Priya's review."
+    }
+  ]
+}
