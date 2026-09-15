@@ -1,0 +1,21 @@
+{
+  "name": "prompt-benchmarking-sandbox",
+  "version": "1.0.0",
+  "description": "A static, zero-build PWA for benchmarking cost, latency, and quality across LLMs side by side.",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "npx serve . -l 5000",
+    "build": "node -e \"const fs=require('fs');const req=['index.html','manifest.json','sw.js','chart.umd.min.js'];const missing=req.filter(f=>!fs.existsSync(f));if(missing.length){console.error('Missing required file(s):',missing.join(', '));process.exit(1);}console.log('Build check passed — all required static files present.');\"",
+    "lint": "eslint . --ext .js,.html"
+  },
+  "devDependencies": {
+    "chart.js": "^4.5.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-html": "^8.1.1",
+    "serve": "^14.2.1"
+  }
+}
