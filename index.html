@@ -156,8 +156,71 @@
   .judge-select-wrap { margin-top: 8px; }
   .judge-select-wrap.hidden { display: none; }
 
+  /* ---------- Advanced settings accordion ---------- */
+  .accordion-header {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card); padding: 12px 14px; min-height: 44px; font-size: 15px; font-weight: 600;
+  }
+  .accordion-header .accordion-chevron { transition: transform .2s ease; color: var(--text-faint); }
+  .accordion-header.open .accordion-chevron { transform: rotate(90deg); }
+  .accordion-body { max-height: 0; overflow: hidden; transition: max-height .25s ease; }
+  .accordion-body.open { max-height: 320px; }
+  .accordion-body-inner { padding: 14px 2px 2px; }
+
+  input[type=range] { -webkit-appearance: none; width: 100%; height: 30px; background: transparent; margin: 4px 0 4px; }
+  input[type=range]::-webkit-slider-runnable-track { height: 4px; background: var(--surface-3); border-radius: 2px; }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--accent);
+    margin-top: -10px; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  }
+  input[type=range]::-moz-range-track { height: 4px; background: var(--surface-3); border-radius: 2px; }
+  input[type=range]::-moz-range-thumb { width: 24px; height: 24px; border: none; border-radius: 50%; background: var(--accent); }
+
+  input[type=number] { width: 100%; background: var(--surface-2); border: 1px solid var(--surface-border); border-radius: var(--radius-input); color: var(--text); padding: 12px 14px; font-size: 15px; min-height: 44px; }
+  input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  /* ---------- Segmented control (sticky, above results) ---------- */
+  .segmented-wrap {
+    position: sticky; top: calc(var(--header-h) + env(safe-area-inset-top));
+    background: var(--bg); padding: 4px 0 10px; z-index: 30;
+  }
+  .segmented { position: relative; display: flex; background: var(--surface-2); border-radius: var(--radius-input); padding: 3px; }
+  .segmented .thumb {
+    position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 3);
+    background: var(--surface); border-radius: 9px; box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    transition: transform .2s cubic-bezier(.32,.72,0,1);
+  }
+  .segmented button {
+    position: relative; flex: 1; background: transparent; border: none; min-height: 40px;
+    font-size: 12.5px; font-weight: 600; color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center; gap: 6px; z-index: 1;
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 4px;
+  }
+  .segmented button.active { color: var(--text); }
+  .seg-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--text-faint); }
+  .seg-dot.ok { background: var(--accent); }
+  .seg-dot.err { background: var(--coral); }
+  .seg-dot.pending { background: var(--text-faint); }
+
+  .win-badge { font-size: 9.5px; font-weight: 800; letter-spacing: 0.02em; padding: 3px 8px; border-radius: var(--radius-pill); white-space: nowrap; }
+  .win-badge.fastest { background: rgba(48,209,88,0.15); color: var(--accent); }
+  .win-badge.cheapest { background: rgba(255,180,84,0.16); color: #ffb454; }
+
+  /* ---------- Export action sheet ---------- */
+  .action-item {
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    background: var(--surface-2); border: 1px solid var(--surface-border); border-radius: var(--radius-input);
+    padding: 13px 14px; min-height: 52px; margin-bottom: 10px; font-size: 15px; font-weight: 600;
+  }
+  .action-item .ai-icon { width: 22px; height: 22px; flex-shrink: 0; color: var(--accent); }
+  .action-item .ai-text { display: flex; flex-direction: column; }
+  .action-item .ai-desc { font-size: 12px; color: var(--text-dim); font-weight: 400; margin-top: 2px; }
+
   /* ---------- Results ---------- */
-  #results { display: flex; flex-direction: column; gap: 12px; }
+  #results { display: flex; flex-direction: column; }
+  #results .result-card { display: none; }
+  #results .result-card.active { display: block; }
   .empty-state {
     text-align: center; color: var(--text-faint); font-size: 14px; padding: 36px 20px;
     border: 1px dashed rgba(255,255,255,0.16); border-radius: var(--radius-card);
@@ -167,18 +230,19 @@
     border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 14px 16px;
   }
   .result-card.is-error { border-color: rgba(255,69,58,0.4); }
-  .result-card.is-loading { opacity: 0.6; }
+  .result-card.is-loading { opacity: 0.75; }
   .result-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
   .result-head .model-name { font-size: 15px; font-weight: 600; }
-  .result-head .head-badges { display: flex; gap: 6px; margin-top: 4px; }
+  .result-head .head-badges { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
   .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
   .status-dot.ok { background: var(--accent); }
   .status-dot.err { background: var(--coral); }
   .status-dot.pending { background: var(--text-faint); }
 
-  .metrics-row { display: flex; gap: 14px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-bottom: 10px; flex-wrap: wrap; }
+  .metrics-row { display: flex; gap: 12px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-bottom: 10px; flex-wrap: wrap; }
   .metrics-row .metric strong { color: var(--text); font-weight: 600; }
   .metric.cost strong { color: var(--accent); }
+  .metric.tps strong { color: #ffb454; }
   .response-text {
     font-size: 14px; line-height: 1.5; color: var(--text); white-space: pre-wrap; word-break: break-word;
     max-height: 220px; overflow-y: auto; background: var(--surface-2); border-radius: var(--radius-input); padding: 10px 12px;
@@ -307,6 +371,33 @@
     </section>
 
     <section>
+      <button class="accordion-header" id="advancedHeader" aria-expanded="false">
+        <span>Advanced API</span>
+        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+      <div class="accordion-body" id="advancedBody">
+        <div class="accordion-body-inner">
+          <div class="section-label" style="display:flex; justify-content:space-between;">
+            <span>Temperature</span>
+            <span id="tempValue" style="font-family:var(--mono); color:var(--accent);">1.00</span>
+          </div>
+          <input type="range" id="tempSlider" min="0" max="2" step="0.05" value="1">
+
+          <div class="section-label" style="margin-top:10px;">Max tokens</div>
+          <input type="number" id="maxTokensInput" min="1" max="200000" step="1" placeholder="Leave blank for provider default" inputmode="numeric">
+
+          <div class="eval-row" style="margin-top:12px;">
+            <label for="streamToggle">Stream tokens (SSE)</label>
+            <div class="switch">
+              <input type="checkbox" id="streamToggle" checked>
+              <div class="track"></div><div class="knob"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
       <div class="section-label">Models to race</div>
       <button class="model-slot" data-slot="A" id="slotBtnA">
         <div>
@@ -356,6 +447,14 @@
 
     <section>
       <div class="section-label">Results</div>
+      <div class="segmented-wrap" id="segmentedWrap" style="display:none;">
+        <div class="segmented" id="segmented">
+          <div class="thumb" id="segThumb"></div>
+          <button data-idx="0"><span class="seg-dot pending"></span><span class="seg-text">Model A</span></button>
+          <button data-idx="1"><span class="seg-dot pending"></span><span class="seg-text">Model B</span></button>
+          <button data-idx="2"><span class="seg-dot pending"></span><span class="seg-text">Model C</span></button>
+        </div>
+      </div>
       <div id="results">
         <div class="empty-state">Run a benchmark to see responses, latency, and live cost side by side.</div>
       </div>
@@ -363,7 +462,7 @@
   </main>
 
   <div class="bottom-bar">
-    <button class="btn btn-secondary" id="exportBtn" disabled>Export .CSV</button>
+    <button class="btn btn-secondary" id="exportBtn" disabled>Export</button>
     <button class="btn btn-primary" id="runBtn">Run Benchmark</button>
   </div>
 
@@ -382,6 +481,9 @@
 
     <label class="field-label" for="googleKey">Google Gemini API key (optional, direct routing)</label>
     <input type="password" id="googleKey" placeholder="AIza…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+
+    <label class="field-label" for="n8nWebhookUrl">n8n webhook URL (for "Export to n8n")</label>
+    <input type="text" id="n8nWebhookUrl" placeholder="https://your-n8n-host/webhook/…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
 
     <label class="field-label">Model catalog</label>
     <div style="display:flex; gap:10px;">
@@ -419,6 +521,39 @@
     <div class="picker-list" id="pickerList"></div>
   </div>
 
+  <!-- Export action sheet -->
+  <div class="sheet-backdrop" id="exportBackdrop"></div>
+  <div class="sheet" id="exportSheet">
+    <div class="sheet-handle"></div>
+    <h2>Export run</h2>
+    <p class="hint">Exports the most recent completed benchmark, including latency, TPS, cost, and any judge scores.</p>
+
+    <button class="action-item" id="exportCsvBtn">
+      <svg class="ai-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+      <span class="ai-text">Export .CSV
+        <span class="ai-desc">Downloads to the Files app</span>
+      </span>
+    </button>
+
+    <button class="action-item" id="exportJsonBtn">
+      <svg class="ai-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      <span class="ai-text">Export .JSON
+        <span class="ai-desc">Full run object including raw outputs</span>
+      </span>
+    </button>
+
+    <button class="action-item" id="exportN8nBtn">
+      <svg class="ai-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="2.5"/><circle cx="19" cy="6" r="2.5"/><circle cx="19" cy="18" r="2.5"/><path d="M7.5 11 16.5 6.8"/><path d="M7.5 13l9 4.2"/></svg>
+      <span class="ai-text">Export to n8n Webhook
+        <span class="ai-desc">POSTs the winning prompt, model, and hyperparameters</span>
+      </span>
+    </button>
+
+    <div class="sheet-actions">
+      <button class="btn btn-secondary" id="closeExportBtn" style="width:auto;">Cancel</button>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
 <script>
@@ -454,6 +589,8 @@
   let activeSlot = null;    // which slot the picker sheet is currently editing
   let lastRun = null;
   let history = [];
+  let liveResults = [];     // results array for the in-flight / most recent run
+  let activeTab = 0;        // which result card the segmented control is showing
 
   const $ = (id) => document.getElementById(id);
   const els = {
@@ -477,7 +614,18 @@
     closeHistoryBtn: $("closeHistoryBtn"), clearHistoryBtn: $("clearHistoryBtn"), historyList: $("historyList"),
 
     pickerBackdrop: $("pickerBackdrop"), pickerSheet: $("pickerSheet"), pickerTitle: $("pickerTitle"),
-    pickerSearch: $("pickerSearch"), pickerList: $("pickerList")
+    pickerSearch: $("pickerSearch"), pickerList: $("pickerList"),
+
+    advancedHeader: $("advancedHeader"), advancedBody: $("advancedBody"),
+    tempSlider: $("tempSlider"), tempValue: $("tempValue"),
+    maxTokensInput: $("maxTokensInput"), streamToggle: $("streamToggle"),
+
+    segmentedWrap: $("segmentedWrap"), segmented: $("segmented"), segThumb: $("segThumb"),
+
+    exportBackdrop: $("exportBackdrop"), exportSheet: $("exportSheet"),
+    exportCsvBtn: $("exportCsvBtn"), exportJsonBtn: $("exportJsonBtn"),
+    exportN8nBtn: $("exportN8nBtn"), closeExportBtn: $("closeExportBtn"),
+    n8nWebhookUrl: $("n8nWebhookUrl")
   };
 
   // ================= Utilities =================
@@ -644,12 +792,60 @@
     els.judgeWrap.classList.toggle("hidden", !els.autoEval.checked);
   });
 
+  // ================= Advanced API accordion =================
+  els.advancedHeader.addEventListener("click", () => {
+    const isOpen = els.advancedBody.classList.toggle("open");
+    els.advancedHeader.classList.toggle("open", isOpen);
+    els.advancedHeader.setAttribute("aria-expanded", String(isOpen));
+  });
+  els.tempSlider.addEventListener("input", () => {
+    els.tempValue.textContent = Number(els.tempSlider.value).toFixed(2);
+  });
+
+  function getHyperparams() {
+    const maxRaw = parseInt(els.maxTokensInput.value, 10);
+    return {
+      temperature: Number(els.tempSlider.value),
+      maxTokens: Number.isFinite(maxRaw) && maxRaw > 0 ? maxRaw : null,
+      stream: els.streamToggle.checked
+    };
+  }
+
+  // ================= Segmented control =================
+  els.segmented.querySelectorAll("button").forEach((btn) => {
+    btn.addEventListener("click", () => setActiveTab(Number(btn.dataset.idx)));
+  });
+
+  function setActiveTab(idx) {
+    activeTab = idx;
+    els.segThumb.style.transform = `translateX(${idx * 100}%)`;
+    els.segmented.querySelectorAll("button").forEach((b, i) => b.classList.toggle("active", i === idx));
+    els.results.querySelectorAll(".result-card").forEach((c, i) => c.classList.toggle("active", i === idx));
+  }
+
+  function updateSegmentedLabels(models) {
+    els.segmented.querySelectorAll("button").forEach((btn, i) => {
+      const m = models[i];
+      const textEl = btn.querySelector(".seg-text");
+      if (!m) { textEl.textContent = `Model ${"ABC"[i]}`; return; }
+      // Short label: strip the provider prefix so it fits a 414px segment.
+      const short = m.name.includes(":") ? m.name.split(":").pop().trim() : m.name;
+      textEl.textContent = short.length > 14 ? short.slice(0, 13) + "…" : short;
+    });
+  }
+
+  function setSegDot(idx, state) {
+    const dot = els.segmented.querySelectorAll("button")[idx]?.querySelector(".seg-dot");
+    if (dot) dot.className = "seg-dot " + state;
+  }
+
   // ================= Settings sheet =================
   els.settingsBtn.addEventListener("click", () => {
     const keys = getApiKeys();
     els.openaiKey.value = keys.openai;
     els.googleKey.value = keys.google;
     els.openrouterKey.value = keys.openrouter;
+    els.n8nWebhookUrl.value = localStorage.getItem("bench_n8n_webhook") || "";
     openSheet(els.settingsSheet, els.settingsBackdrop);
   });
   els.closeSettingsBtn.addEventListener("click", () => closeSheet(els.settingsSheet, els.settingsBackdrop));
@@ -658,8 +854,9 @@
     localStorage.setItem("bench_openai_key", els.openaiKey.value.trim());
     localStorage.setItem("bench_google_key", els.googleKey.value.trim());
     localStorage.setItem("bench_openrouter_key", els.openrouterKey.value.trim());
+    localStorage.setItem("bench_n8n_webhook", els.n8nWebhookUrl.value.trim());
     closeSheet(els.settingsSheet, els.settingsBackdrop);
-    showToast("Keys saved");
+    showToast("Settings saved");
   });
   els.forceRefreshBtn.addEventListener("click", async () => {
     showToast("Refreshing model catalog…");
@@ -714,37 +911,117 @@
   // If a direct OpenAI/Google key is set AND the model is from that provider,
   // try direct first (cheaper, no OpenRouter markup) and fall back to
   // OpenRouter automatically if the direct call errors.
-  async function directCallOpenAI(apiModel, sys, user, key) {
+  // Reads an OpenAI-compatible SSE stream (OpenAI and OpenRouter share the
+  // same `data: {...}` / `data: [DONE]` chat-completion chunk format), calling
+  // onDelta with each text fragment as it lands.
+  async function readSseStream(res, onDelta) {
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let full = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";           // keep the trailing partial line
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data:")) continue;
+        const payload = trimmed.slice(5).trim();
+        if (payload === "[DONE]") continue;
+        try {
+          const chunk = JSON.parse(payload);
+          const delta = chunk?.choices?.[0]?.delta?.content || "";
+          if (delta) { full += delta; onDelta(delta, full); }
+        } catch { /* ignore keep-alive and partial frames */ }
+      }
+    }
+    return full;
+  }
+
+  function buildOpenAiBody(apiModel, sys, user, params, stream) {
+    const body = {
+      model: apiModel,
+      messages: [{ role: "system", content: sys || "" }, { role: "user", content: user || "" }],
+      temperature: params.temperature
+    };
+    if (params.maxTokens) body.max_tokens = params.maxTokens;
+    if (stream) body.stream = true;
+    return body;
+  }
+
+  async function directCallOpenAI(apiModel, sys, user, key, params, onDelta) {
     try {
+      const stream = params.stream && typeof onDelta === "function";
       const res = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${key}` },
-        body: JSON.stringify({ model: apiModel, messages: [{ role: "system", content: sys || "" }, { role: "user", content: user || "" }] })
+        body: JSON.stringify(buildOpenAiBody(apiModel, sys, user, params, stream))
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
+      }
+      if (stream) return { text: await readSseStream(res, onDelta) };
       const data = await res.json();
-      if (!res.ok) return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
       return { text: data?.choices?.[0]?.message?.content || "" };
     } catch (err) { return { text: "", error: err.message }; }
   }
-  async function directCallGoogle(apiModel, sys, user, key) {
+  async function directCallGoogle(apiModel, sys, user, key, params, onDelta) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${apiModel}:generateContent?key=${encodeURIComponent(key)}`;
+      const stream = params.stream && typeof onDelta === "function";
+      // Gemini uses its own SSE endpoint and its own generationConfig shape.
+      const method = stream ? "streamGenerateContent" : "generateContent";
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${apiModel}:${method}?key=${encodeURIComponent(key)}${stream ? "&alt=sse" : ""}`;
+      const generationConfig = { temperature: params.temperature };
+      if (params.maxTokens) generationConfig.maxOutputTokens = params.maxTokens;
+
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           systemInstruction: sys ? { parts: [{ text: sys }] } : undefined,
-          contents: [{ role: "user", parts: [{ text: user || "" }] }]
+          contents: [{ role: "user", parts: [{ text: user || "" }] }],
+          generationConfig
         })
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
+      }
+
+      if (stream) {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "", full = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith("data:")) continue;
+            try {
+              const chunk = JSON.parse(trimmed.slice(5).trim());
+              const delta = chunk?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
+              if (delta) { full += delta; onDelta(delta, full); }
+            } catch { /* ignore partial frames */ }
+          }
+        }
+        return { text: full };
+      }
+
       const data = await res.json();
-      if (!res.ok) return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
       const text = data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
       return { text };
     } catch (err) { return { text: "", error: err.message }; }
   }
-  async function callOpenRouter(fullId, sys, user, key) {
+  async function callOpenRouter(fullId, sys, user, key, params, onDelta) {
     try {
+      const stream = params.stream && typeof onDelta === "function";
       const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -753,28 +1030,36 @@
           "HTTP-Referer": location.href,
           "X-Title": "Prompt Benchmarking & Cost Analyzer Sandbox"
         },
-        body: JSON.stringify({ model: fullId, messages: [{ role: "system", content: sys || "" }, { role: "user", content: user || "" }] })
+        body: JSON.stringify(buildOpenAiBody(fullId, sys, user, params, stream))
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
+      }
+      if (stream) return { text: await readSseStream(res, onDelta) };
       const data = await res.json();
-      if (!res.ok) return { text: "", error: data?.error?.message || `HTTP ${res.status}` };
       return { text: data?.choices?.[0]?.message?.content || "" };
     } catch (err) { return { text: "", error: err.message }; }
   }
 
-  async function callModel(model, sys, user) {
+  // params: { temperature, maxTokens, stream }
+  // onDelta(deltaText, fullTextSoFar) is optional; omit it to force a blocking call
+  // (the judge pass does this, since there's no card to stream into).
+  async function callModel(model, sys, user, params, onDelta) {
+    const p = params || { temperature: 1, maxTokens: null, stream: false };
     const keys = getApiKeys();
     let directAttempt = null;
 
     if (model.provider === "openai" && keys.openai) {
-      directAttempt = await directCallOpenAI(model.id.replace(/^openai\//, ""), sys, user, keys.openai);
+      directAttempt = await directCallOpenAI(model.id.replace(/^openai\//, ""), sys, user, keys.openai, p, onDelta);
       if (!directAttempt.error) return { ...directAttempt, routedVia: "openai (direct)" };
     } else if (model.provider === "google" && keys.google) {
-      directAttempt = await directCallGoogle(model.id.replace(/^google\//, ""), sys, user, keys.google);
+      directAttempt = await directCallGoogle(model.id.replace(/^google\//, ""), sys, user, keys.google, p, onDelta);
       if (!directAttempt.error) return { ...directAttempt, routedVia: "google (direct)" };
     }
 
     if (keys.openrouter) {
-      const result = await callOpenRouter(model.id, sys, user, keys.openrouter);
+      const result = await callOpenRouter(model.id, sys, user, keys.openrouter, p, onDelta);
       return { ...result, routedVia: "openrouter" + (directAttempt ? " (fallback)" : "") };
     }
 
@@ -782,48 +1067,132 @@
   }
 
   // ================= Results rendering =================
-  function renderLoadingCards(models) {
+  // Cards are built once per run and then mutated in place, so streaming deltas
+  // don't tear down the DOM node the user is currently reading.
+  function buildResultScaffolding(models) {
     els.results.innerHTML = "";
-    models.forEach((m) => {
+    models.forEach((m, i) => {
       const card = document.createElement("div");
-      card.className = "result-card is-loading";
+      card.className = "result-card is-loading" + (i === activeTab ? " active" : "");
+      card.id = "resultCard" + i;
       card.innerHTML = `
         <div class="result-head">
-          <span class="model-name">${escapeHtml(m.name)}<div class="head-badges"><span class="badge">${escapeHtml(m.provider)}</span></div></span>
+          <span class="model-name">${escapeHtml(m.name)}
+            <div class="head-badges">
+              <span class="badge">${escapeHtml(m.provider)}</span>
+              <span class="badge route-badge">routing…</span>
+            </div>
+          </span>
           <span class="spinner"></span>
         </div>
-        <div class="response-text">Waiting for response…</div>`;
+        <div class="metrics-row">
+          <span class="metric latency">latency <strong>—</strong></span>
+          <span class="metric tps">tps <strong>—</strong></span>
+          <span class="metric tokens">tok in/out <strong>—</strong></span>
+          <span class="metric cost">cost <strong>$—</strong></span>
+        </div>
+        <div class="response-text">Waiting for response…</div>
+        <div class="judge-slot"></div>`;
       els.results.appendChild(card);
+    });
+    els.segmentedWrap.style.display = "block";
+    updateSegmentedLabels(models);
+    [0, 1, 2].forEach((i) => setSegDot(i, "pending"));
+    setActiveTab(0);
+  }
+
+  // Called on every streamed delta — only touches the response text node.
+  function streamIntoCard(idx, fullText) {
+    const card = $("resultCard" + idx);
+    if (!card) return;
+    const body = card.querySelector(".response-text");
+    if (body) {
+      const pinnedToBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 30;
+      body.textContent = fullText;
+      if (pinnedToBottom) body.scrollTop = body.scrollHeight;
+    }
+  }
+
+  function finalizeCard(idx, r) {
+    const card = $("resultCard" + idx);
+    if (!card) return;
+    card.classList.remove("is-loading");
+    card.classList.toggle("is-error", !!r.error);
+
+    const spinner = card.querySelector(".spinner");
+    if (spinner) spinner.outerHTML = `<span class="status-dot ${r.error ? "err" : "ok"}"></span>`;
+
+    const routeBadge = card.querySelector(".route-badge");
+    if (routeBadge) routeBadge.textContent = r.routedVia || "—";
+
+    const metrics = card.querySelector(".metrics-row");
+    if (metrics) {
+      metrics.innerHTML = `
+        <span class="metric latency">latency <strong>${r.latencyMs != null ? r.latencyMs + "ms" : "—"}</strong></span>
+        <span class="metric tps">tps <strong>${r.tps != null ? r.tps.toFixed(1) : "—"}</strong></span>
+        <span class="metric tokens">tok in/out <strong>${r.inputTokensEst ?? "—"}/${r.outputTokensEst ?? "—"}</strong></span>
+        <span class="metric cost">cost <strong>$${r.costUsd != null ? r.costUsd.toFixed(5) : "—"}</strong></span>`;
+    }
+
+    const body = card.querySelector(".response-text");
+    if (r.error) {
+      if (body) body.outerHTML = `<div class="error-text">${escapeHtml(r.error)}</div>`;
+    } else if (body) {
+      body.textContent = r.responseText || "(empty response)";
+    }
+
+    setSegDot(idx, r.error ? "err" : "ok");
+  }
+
+  // Compares the finished run and mounts Fastest / Cheapest badges.
+  // Only successful responses are eligible — an instant error isn't "fastest".
+  function applyWinnerBadges(results) {
+    const eligible = results.map((r, i) => ({ r, i })).filter(({ r }) => !r.error && r.responseText);
+    if (eligible.length < 2) return;
+
+    const fastest = eligible.reduce((a, b) => (b.r.latencyMs < a.r.latencyMs ? b : a));
+    const cheapest = eligible.reduce((a, b) => (b.r.costUsd < a.r.costUsd ? b : a));
+
+    results.forEach((r) => { r.isFastest = false; r.isCheapest = false; });
+    results[fastest.i].isFastest = true;
+    results[cheapest.i].isCheapest = true;
+
+    eligible.forEach(({ i }) => {
+      const badges = $("resultCard" + i)?.querySelector(".head-badges");
+      if (!badges) return;
+      badges.querySelectorAll(".win-badge").forEach((b) => b.remove());
+      if (i === fastest.i) badges.insertAdjacentHTML("beforeend", '<span class="win-badge fastest">Fastest ⚡</span>');
+      if (i === cheapest.i) badges.insertAdjacentHTML("beforeend", '<span class="win-badge cheapest">Cheapest 💰</span>');
     });
   }
 
+  function renderJudgeScore(idx, judge) {
+    const slot = $("resultCard" + idx)?.querySelector(".judge-slot");
+    if (!slot || !judge) return;
+    slot.innerHTML = `
+      <div class="judge-box">
+        <div class="judge-score">${judge.score != null ? judge.score : "–"}</div>
+        <div class="judge-critique">${escapeHtml(judge.critique || "")}</div>
+      </div>`;
+  }
+
+  // Full re-render, used when loading a run from history (nothing to stream).
   function renderResults(results) {
     els.results.innerHTML = "";
     if (!results.length) {
+      els.segmentedWrap.style.display = "none";
       els.results.innerHTML = '<div class="empty-state">Run a benchmark to see responses, latency, and live cost side by side.</div>';
       return;
     }
-    results.forEach((r) => {
-      const card = document.createElement("div");
-      card.className = "result-card" + (r.error ? " is-error" : "");
-      const body = r.error ? `<div class="error-text">${escapeHtml(r.error)}</div>` : `<div class="response-text">${escapeHtml(r.responseText)}</div>`;
-      const judgeHtml = r.judge
-        ? `<div class="judge-box"><div class="judge-score">${r.judge.score != null ? r.judge.score : "–"}</div><div class="judge-critique">${escapeHtml(r.judge.critique || "")}</div></div>`
-        : "";
-      card.innerHTML = `
-        <div class="result-head">
-          <span class="model-name">${escapeHtml(r.label)}<div class="head-badges"><span class="badge">${escapeHtml(r.provider)}</span><span class="badge">${escapeHtml(r.routedVia || "")}</span></div></span>
-          <span class="status-dot ${r.error ? "err" : "ok"}"></span>
-        </div>
-        <div class="metrics-row">
-          <span class="metric latency">latency <strong>${r.latencyMs != null ? r.latencyMs + "ms" : "—"}</strong></span>
-          <span class="metric tokens">tok in/out <strong>${r.inputTokensEst ?? "—"}/${r.outputTokensEst ?? "—"}</strong></span>
-          <span class="metric cost">cost <strong>$${r.costUsd != null ? r.costUsd.toFixed(5) : "—"}</strong></span>
-        </div>
-        ${body}
-        ${judgeHtml}`;
-      els.results.appendChild(card);
+    liveResults = results;
+    buildResultScaffolding(results.map((r) => ({ name: r.label, provider: r.provider })));
+    results.forEach((r, i) => {
+      streamIntoCard(i, r.responseText || "");
+      finalizeCard(i, r);
+      if (r.judge) renderJudgeScore(i, r.judge);
     });
+    applyWinnerBadges(results);
+    setActiveTab(0);
   }
 
   // ================= LLM-as-judge (inlined) =================
@@ -863,8 +1232,23 @@
   // ================= CSV export (inlined) =================
   function csvEscape(v) { const s = String(v ?? ""); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
   function runToCsv(run) {
-    const headers = ["Timestamp", "System Prompt", "Test Dataset", "Model", "Provider", "Routed Via", "Latency (ms)", "Est. Input Tokens", "Est. Output Tokens", "Est. Cost (USD)", "Judge Score", "Judge Critique", "Response", "Error"];
-    const rows = run.results.map((r) => [run.timestamp, run.systemPrompt, run.testDataset, r.label, r.provider, r.routedVia || "", r.latencyMs ?? "", r.inputTokensEst ?? "", r.outputTokensEst ?? "", r.costUsd != null ? r.costUsd.toFixed(6) : "", r.judge ? r.judge.score : "", r.judge ? r.judge.critique : "", r.responseText ?? "", r.error ?? ""]);
+    const hp = run.hyperparams || {};
+    const headers = [
+      "Timestamp", "System Prompt", "Test Dataset", "Temperature", "Max Tokens", "Streamed",
+      "Model", "Provider", "Routed Via", "Latency (ms)", "First Token (ms)", "Tokens/sec",
+      "Est. Input Tokens", "Est. Output Tokens", "Est. Cost (USD)",
+      "Fastest", "Cheapest", "Judge Score", "Judge Critique", "Response", "Error"
+    ];
+    const rows = run.results.map((r) => [
+      run.timestamp, run.systemPrompt, run.testDataset,
+      r.temperature ?? hp.temperature ?? "", r.maxTokens ?? hp.maxTokens ?? "", r.streamed ?? hp.stream ?? "",
+      r.label, r.provider, r.routedVia || "",
+      r.latencyMs ?? "", r.firstTokenMs ?? "", r.tps != null ? r.tps.toFixed(2) : "",
+      r.inputTokensEst ?? "", r.outputTokensEst ?? "", r.costUsd != null ? r.costUsd.toFixed(6) : "",
+      r.isFastest ? "yes" : "", r.isCheapest ? "yes" : "",
+      r.judge ? r.judge.score : "", r.judge ? r.judge.critique : "",
+      r.responseText ?? "", r.error ?? ""
+    ]);
     return [headers, ...rows].map((row) => row.map(csvEscape).join(",")).join("\n");
   }
   function downloadBlob(content, filename, mime) {
@@ -879,6 +1263,69 @@
     const stamp = new Date(run.timestamp).toISOString().replace(/[:.]/g, "-");
     downloadBlob(runToCsv(run), `benchmark-${stamp}.csv`, "text/csv");
   }
+  function exportRunAsJson(run) {
+    const stamp = new Date(run.timestamp).toISOString().replace(/[:.]/g, "-");
+    downloadBlob(JSON.stringify(run, null, 2), `benchmark-${stamp}.json`, "application/json");
+  }
+
+  // ================= n8n webhook export =================
+  // "Winner" = highest judge score when the judge ran, otherwise the cheapest
+  // successful response. Latency alone is a poor proxy for which prompt+model
+  // pairing you actually want promoted into a live workflow.
+  function pickWinner(run) {
+    const ok = run.results.filter((r) => !r.error && r.responseText);
+    if (!ok.length) return null;
+    const judged = ok.filter((r) => r.judge && r.judge.score != null);
+    if (judged.length) return judged.reduce((a, b) => (b.judge.score > a.judge.score ? b : a));
+    return ok.reduce((a, b) => (b.costUsd < a.costUsd ? b : a));
+  }
+
+  async function exportToN8n(run) {
+    const url = (localStorage.getItem("bench_n8n_webhook") || "").trim();
+    if (!url) { showToast("Add your n8n webhook URL in Settings first"); return; }
+
+    const winner = pickWinner(run);
+    if (!winner) { showToast("No successful response to export"); return; }
+
+    const payload = {
+      source: "prompt-benchmarking-sandbox",
+      timestamp: run.timestamp,
+      systemPrompt: run.systemPrompt,
+      testDataset: run.testDataset,
+      hyperparameters: run.hyperparams,
+      winner: {
+        modelId: winner.modelId,
+        label: winner.label,
+        provider: winner.provider,
+        selectedBy: winner.judge && winner.judge.score != null ? "judge_score" : "lowest_cost",
+        judgeScore: winner.judge ? winner.judge.score : null,
+        latencyMs: winner.latencyMs,
+        tokensPerSecond: winner.tps != null ? Number(winner.tps.toFixed(2)) : null,
+        estimatedCostUsd: winner.costUsd,
+        output: winner.responseText
+      },
+      allResults: run.results.map((r) => ({
+        modelId: r.modelId, label: r.label, latencyMs: r.latencyMs,
+        tokensPerSecond: r.tps != null ? Number(r.tps.toFixed(2)) : null,
+        estimatedCostUsd: r.costUsd, judgeScore: r.judge ? r.judge.score : null,
+        isFastest: !!r.isFastest, isCheapest: !!r.isCheapest, error: r.error
+      }))
+    };
+
+    showToast("Posting to n8n…");
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) { showToast(`n8n returned HTTP ${res.status}`); return; }
+      showToast("Sent to n8n ✓");
+    } catch (err) {
+      // Almost always CORS: n8n webhook nodes don't send the allow headers by default.
+      showToast("n8n POST failed — check the webhook's CORS settings");
+    }
+  }
 
   // ================= Run benchmark =================
   async function runBenchmark() {
@@ -889,33 +1336,66 @@
     const dataset = els.testDataset.value;
     if (!sys.trim() && !dataset.trim()) { showToast("Add a system prompt or test dataset first"); return; }
 
+    const params = getHyperparams();
+
     els.runBtn.disabled = true;
     els.runBtn.textContent = "Running…";
-    renderLoadingCards(models);
+    activeTab = 0;
+    buildResultScaffolding(models);
 
     const inputTokensEst = estimateTokens(sys) + estimateTokens(dataset);
 
-    const results = await Promise.all(models.map(async (m) => {
+    const results = await Promise.all(models.map(async (m, idx) => {
       const start = performance.now();
-      const { text, error, routedVia } = await callModel(m, sys, dataset);
+      let firstTokenMs = null;
+
+      const onDelta = params.stream
+        ? (delta, full) => {
+            if (firstTokenMs === null) firstTokenMs = Math.round(performance.now() - start);
+            streamIntoCard(idx, full);
+          }
+        : undefined;
+
+      const { text, error, routedVia } = await callModel(m, sys, dataset, params, onDelta);
       const latencyMs = Math.round(performance.now() - start);
       const outputTokensEst = estimateTokens(text);
+
+      // TPS measures generation speed, so when streaming we exclude time-to-first-token
+      // (that's queue/prefill latency, not throughput). Without streaming we can only
+      // divide by total latency, which understates TPS slightly.
+      const genMs = firstTokenMs != null ? Math.max(1, latencyMs - firstTokenMs) : latencyMs;
+      const tps = error || !outputTokensEst ? null : (outputTokensEst / (genMs / 1000));
+
       const costUsd = error ? 0 : inputTokensEst * m.promptPrice + outputTokensEst * m.completionPrice;
-      return { modelId: m.id, label: m.name, provider: m.provider, latencyMs, inputTokensEst, outputTokensEst, costUsd, responseText: text, error: error || null, routedVia, judge: null };
+      const r = {
+        modelId: m.id, label: m.name, provider: m.provider,
+        latencyMs, firstTokenMs, tps, inputTokensEst, outputTokensEst, costUsd,
+        responseText: text, error: error || null, routedVia,
+        temperature: params.temperature, maxTokens: params.maxTokens, streamed: params.stream,
+        judge: null, isFastest: false, isCheapest: false
+      };
+      finalizeCard(idx, r);
+      return r;
     }));
 
-    renderResults(results);
+    liveResults = results;
+    applyWinnerBadges(results);
 
     if (els.autoEval.checked && selected.J) {
       showToast("Judging outputs…");
       try {
         const verdicts = await evaluateWithJudge(selected.J, sys, dataset, results);
-        verdicts.forEach((v, i) => { results[i].judge = v; });
-        renderResults(results);
+        verdicts.forEach((v, i) => { results[i].judge = v; renderJudgeScore(i, v); });
       } catch (err) { showToast("Judging failed: " + err.message); }
     }
 
-    const run = { timestamp: new Date().toISOString(), systemPrompt: sys, testDataset: dataset, results };
+    const run = {
+      timestamp: new Date().toISOString(),
+      systemPrompt: sys,
+      testDataset: dataset,
+      hyperparams: params,
+      results
+    };
     lastRun = run;
     history.unshift(run);
     history = history.slice(0, 5);
@@ -927,10 +1407,26 @@
   }
 
   els.runBtn.addEventListener("click", runBenchmark);
+
+  // ================= Export action sheet =================
   els.exportBtn.addEventListener("click", () => {
     if (!lastRun) return;
-    exportRunAsCsv(lastRun);
-    showToast("CSV exported");
+    openSheet(els.exportSheet, els.exportBackdrop);
+  });
+  els.closeExportBtn.addEventListener("click", () => closeSheet(els.exportSheet, els.exportBackdrop));
+  els.exportBackdrop.addEventListener("click", () => closeSheet(els.exportSheet, els.exportBackdrop));
+
+  els.exportCsvBtn.addEventListener("click", () => {
+    closeSheet(els.exportSheet, els.exportBackdrop);
+    if (lastRun) { exportRunAsCsv(lastRun); showToast("CSV exported"); }
+  });
+  els.exportJsonBtn.addEventListener("click", () => {
+    closeSheet(els.exportSheet, els.exportBackdrop);
+    if (lastRun) { exportRunAsJson(lastRun); showToast("JSON exported"); }
+  });
+  els.exportN8nBtn.addEventListener("click", () => {
+    closeSheet(els.exportSheet, els.exportBackdrop);
+    if (lastRun) exportToN8n(lastRun);
   });
 
   // ================= Boot =================
