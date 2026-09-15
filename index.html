@@ -787,7 +787,7 @@
 
   // ================= State =================
   let catalog = [];        // [{id, name, provider, context, promptPrice, completionPrice}]
-  let selected = { A: null, B: null, C: null, J: null };
+  const selected = { A: null, B: null, C: null, J: null };
   let activeSlot = null;    // which slot the picker sheet is currently editing
   let lastRun = null;
   let history = [];
@@ -838,7 +838,7 @@
     showToast._t = setTimeout(() => els.toast.classList.remove("show"), ms);
   }
   function estimateTokens(text) { return text ? Math.max(1, Math.ceil(text.length / 4)) : 0; }
-  function formatCtx(n) { if (!n) return "—"; return n >= 1000 ? Math.round(n / 1000) + "K ctx" : n + " ctx"; }
+  function formatCtx(n) { if (!n) return "—"; return n >= 1000 ? `${Math.round(n / 1000)}K ctx` : `${n} ctx`; }
   function getApiKeys() {
     return {
       openai: localStorage.getItem("bench_openai_key") || "",
@@ -864,7 +864,7 @@
     setStatus("⚪ Loading models…");
     try {
       const res = await fetch("https://openrouter.ai/api/v1/models");
-      if (!res.ok) throw new Error("HTTP " + res.status);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       catalog = (data.data || []).map((m) => ({
         id: m.id,
@@ -915,9 +915,9 @@
 
   function renderSlot(slot) {
     const m = selected[slot];
-    $("slotName" + slot).textContent = m ? m.name : "No models loaded";
-    $("slotBadge" + slot).textContent = m ? m.provider : "—";
-    $("slotCtx" + slot).textContent = m ? formatCtx(m.context) : "—";
+    $(`slotName${slot}`).textContent = m ? m.name : "No models loaded";
+    $(`slotBadge${slot}`).textContent = m ? m.provider : "—";
+    $(`slotCtx${slot}`).textContent = m ? formatCtx(m.context) : "—";
   }
 
   // ================= Model picker sheet =================
@@ -1032,13 +1032,13 @@
       if (!m) { textEl.textContent = `Model ${"ABC"[i]}`; return; }
       // Short label: strip the provider prefix so it fits a 414px segment.
       const short = m.name.includes(":") ? m.name.split(":").pop().trim() : m.name;
-      textEl.textContent = short.length > 14 ? short.slice(0, 13) + "…" : short;
+      textEl.textContent = short.length > 14 ? `${short.slice(0, 13)}…` : short;
     });
   }
 
   function setSegDot(idx, state) {
     const dot = els.segmented.querySelectorAll("button")[idx]?.querySelector(".seg-dot");
-    if (dot) dot.className = "seg-dot " + state;
+    if (dot) dot.className = `seg-dot ${state}`;
   }
 
   // ================= Settings sheet =================
