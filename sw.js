@@ -2,8 +2,8 @@
 // site as an installable PWA. It never caches API responses (OpenRouter,
 // OpenAI, Google) — those are live benchmark calls and must stay live.
 
-const CACHE_NAME = "bench-sandbox-v2";
-const APP_SHELL = ["./", "./index.html", "./manifest.json"];
+const CACHE_NAME = "bench-sandbox-v3";
+const APP_SHELL = ["./", "./index.html", "./manifest.json", "./chart.umd.min.js"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

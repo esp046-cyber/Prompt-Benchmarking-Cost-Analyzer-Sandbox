@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>Prompt Benchmarking &amp; Cost Analyzer Sandbox</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="./chart.umd.min.js" defer></script>
 <style>
   :root {
     --bg: #000000;
@@ -1545,7 +1545,7 @@
     if (typeof Chart === "undefined") {
       canvas.style.display = "none";
       fallback.style.display = "block";
-      fallback.textContent = "Chart unavailable offline — reconnect and re-run to plot quality against cost.";
+      fallback.textContent = "Chart library failed to load — check that chart.umd.min.js was deployed alongside index.html.";
       return;
     }
     canvas.style.display = "block";
