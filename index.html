@@ -10,6 +10,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>Prompt Benchmarking &amp; Cost Analyzer Sandbox</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 <style>
   :root {
     --bg: #000000;
@@ -217,36 +218,97 @@
   .action-item .ai-text { display: flex; flex-direction: column; }
   .action-item .ai-desc { font-size: 12px; color: var(--text-dim); font-weight: 400; margin-top: 2px; }
 
-  /* ---------- Decision Engine winner banner ---------- */
-  .winner-banner {
-    background: linear-gradient(160deg, rgba(48,209,88,0.10), rgba(48,209,88,0.02));
-    border: 1px solid rgba(48,209,88,0.28);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    padding: 14px 16px;
-    margin-bottom: 12px;
+  /* ---------- Winner hero card ---------- */
+  .hero-winner {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 50% -20%, rgba(48,209,88,0.20), transparent 62%),
+      linear-gradient(170deg, #1f2a22, #16181a);
+    border: 1px solid rgba(48,209,88,0.32);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+    padding: 20px 18px 18px; margin-bottom: 14px;
   }
-  .winner-banner.hidden { display: none; }
-  .wb-title {
-    font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--text-faint); margin-bottom: 10px;
+  .hero-winner.hidden { display: none; }
+  .hw-eyebrow {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 10.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 8px;
   }
-  .wb-crown {
-    display: flex; align-items: center; gap: 10px;
-    background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.3);
-    border-radius: var(--radius-input); padding: 10px 12px; margin-bottom: 12px;
+  .hw-name {
+    font-size: 24px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.15;
+    text-align: center; margin-bottom: 4px; word-break: break-word;
   }
-  .wb-crown .wbc-emoji { font-size: 20px; flex-shrink: 0; }
-  .wb-crown .wbc-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); }
-  .wb-crown .wbc-model { font-size: 15px; font-weight: 700; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .wb-rows { display: flex; flex-direction: column; gap: 8px; }
-  .wb-row { display: flex; align-items: center; gap: 10px; min-height: 32px; }
-  .wb-row .wbr-emoji { font-size: 15px; width: 20px; flex-shrink: 0; text-align: center; }
-  .wb-row .wbr-cat { font-size: 12px; color: var(--text-dim); width: 86px; flex-shrink: 0; }
-  .wb-row .wbr-model { font-size: 13px; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .wb-row .wbr-val { font-size: 12px; font-family: var(--mono); color: var(--accent); flex-shrink: 0; }
-  .wb-note { font-size: 11.5px; color: var(--text-faint); margin-top: 10px; line-height: 1.4; }
+  .hw-sub { font-size: 12px; color: var(--text-dim); text-align: center; margin-bottom: 16px; }
+  .hw-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hw-kpi {
+    background: rgba(0,0,0,0.30); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px; padding: 13px 8px; text-align: center;
+  }
+  .hw-kpi-value { font-family: var(--mono); font-size: 26px; font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; }
+  .hw-kpi-value .kpi-unit { font-size: 12px; font-weight: 600; color: var(--text-faint); margin-left: 2px; }
+  .hw-kpi-label {
+    font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--text-faint); margin-top: 6px;
+  }
+  .hw-kpi.quality .hw-kpi-value { color: #bf5af2; }
+  .hw-kpi.latency .hw-kpi-value { color: #64d2ff; }
+  .hw-kpi.cost .hw-kpi-value { color: var(--accent); }
+  .hw-kpi.tps .hw-kpi-value { color: #ffb454; }
+  .hw-cats { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+  .hw-cat {
+    font-size: 10px; font-weight: 700; padding: 4px 9px; border-radius: var(--radius-pill);
+    background: rgba(255,255,255,0.06); color: var(--text-dim); white-space: nowrap;
+  }
+  .hw-cat.won { background: rgba(48,209,88,0.16); color: var(--accent); }
+  .hw-note { font-size: 11px; color: var(--text-faint); text-align: center; margin-top: 12px; line-height: 1.45; }
 
+  /* ---------- Comparison matrix ---------- */
+  .matrix-scroll {
+    overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 14px;
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+  }
+  .matrix-scroll.hidden { display: none; }
+  .matrix { min-width: 100%; border-collapse: collapse; }
+  .matrix th, .matrix td {
+    padding: 11px 10px; text-align: center; font-size: 13px;
+    border-bottom: 1px solid var(--surface-border); white-space: nowrap;
+  }
+  .matrix tr:last-child th, .matrix tr:last-child td { border-bottom: none; }
+  .matrix thead th { font-size: 11px; font-weight: 700; color: var(--text); background: var(--surface-2); }
+  .matrix thead th .mx-provider {
+    display: block; font-size: 9px; font-weight: 600; color: var(--text-faint);
+    text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px;
+  }
+  .matrix .mx-rowlabel {
+    text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--text-faint);
+    position: sticky; left: 0; background: var(--surface); z-index: 1; min-width: 86px;
+  }
+  .matrix thead .mx-rowlabel { background: var(--surface-2); z-index: 2; }
+  .matrix td.mx-val { font-family: var(--mono); font-weight: 600; color: var(--text); min-width: 92px; }
+  .matrix td.mx-val.best { color: var(--accent); }
+  .matrix td.mx-val.dim { color: var(--text-faint); }
+  .matrix td.mx-err { color: var(--coral); font-size: 11px; }
+
+  /* ---------- Scatter chart ---------- */
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+    padding: 14px 14px 10px; margin-bottom: 14px;
+  }
+  .chart-card.hidden { display: none; }
+  .chart-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .chart-sub { font-size: 11.5px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.4; }
+  .chart-holder { position: relative; height: 240px; }
+  .chart-fallback { font-size: 12.5px; color: var(--text-faint); text-align: center; padding: 30px 10px; line-height: 1.5; }
+
+  .outputs-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-faint); margin: 2px 0 8px 2px;
+  }
+  .outputs-label.hidden { display: none; }
   /* ---------- KPI grid inside result cards ---------- */
   .kpi-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
@@ -536,12 +598,32 @@
     <section>
       <div class="section-label">Results</div>
 
-      <div class="winner-banner hidden" id="winnerBanner">
-        <div class="wb-title">Decision Engine</div>
-        <div id="winnerCrown"></div>
-        <div class="wb-rows" id="winnerRows"></div>
-        <div class="wb-note" id="winnerNote"></div>
+      <div class="hero-winner hidden" id="heroWinner">
+        <div class="hw-eyebrow"><span>🏆</span><span>Overall Winner</span></div>
+        <div class="hw-name" id="hwName">—</div>
+        <div class="hw-sub" id="hwSub"></div>
+        <div class="hw-kpis">
+          <div class="hw-kpi quality"><div class="hw-kpi-value" id="hwQuality">—</div><div class="hw-kpi-label">Quality Score</div></div>
+          <div class="hw-kpi latency"><div class="hw-kpi-value" id="hwLatency">—</div><div class="hw-kpi-label">Latency</div></div>
+          <div class="hw-kpi cost"><div class="hw-kpi-value" id="hwCost">—</div><div class="hw-kpi-label">Cost / run</div></div>
+          <div class="hw-kpi tps"><div class="hw-kpi-value" id="hwTps">—</div><div class="hw-kpi-label">Tokens / sec</div></div>
+        </div>
+        <div class="hw-cats" id="hwCats"></div>
+        <div class="hw-note" id="hwNote"></div>
       </div>
+
+      <div class="matrix-scroll hidden" id="matrixWrap">
+        <table class="matrix" id="matrixTable"></table>
+      </div>
+
+      <div class="chart-card hidden" id="chartCard">
+        <div class="chart-title">Quality vs. Cost</div>
+        <div class="chart-sub" id="chartSub">Upper-left is the sweet spot: high quality, low cost.</div>
+        <div class="chart-holder"><canvas id="benchmarkChart"></canvas></div>
+        <div class="chart-fallback" id="chartFallback" style="display:none;"></div>
+      </div>
+
+      <div class="outputs-label hidden" id="outputsLabel">Full outputs</div>
 
       <div class="segmented-wrap" id="segmentedWrap" style="display:none;">
         <div class="segmented" id="segmented">
@@ -1338,54 +1420,211 @@
     return { winners, champion, championWins, categoriesScored: Object.keys(winners).length, contenders: ok.length };
   }
 
-  function renderWinnerBanner(results) {
-    const banner = $("winnerBanner");
+  // Picks the single best overall model: highest judge score, then lowest cost,
+  // then lowest latency as successive tie-breakers.
+  function pickOverallWinner(results) {
+    const ok = results.filter((r) => !r.error && r.responseText);
+    if (!ok.length) return null;
+    return ok.slice().sort((a, b) => {
+      const sa = a.judge && a.judge.score != null ? a.judge.score : -1;
+      const sb = b.judge && b.judge.score != null ? b.judge.score : -1;
+      if (sb !== sa) return sb - sa;
+      if (a.costUsd !== b.costUsd) return a.costUsd - b.costUsd;
+      return a.latencyMs - b.latencyMs;
+    })[0];
+  }
+
+  // ---------- 1. Winner hero card ----------
+  function renderHeroWinner(results) {
+    const hero = $("heroWinner");
     const decision = computeDecision(results);
-    if (!decision) { banner.classList.add("hidden"); return; }
+    const winner = pickOverallWinner(results);
+    if (!winner || !decision) { hero.classList.add("hidden"); return; }
 
-    $("winnerCrown").innerHTML = decision.champion
-      ? `<div class="wb-crown">
-           <span class="wbc-emoji">👑</span>
-           <div style="min-width:0;">
-             <div class="wbc-label">Recommended for production</div>
-             <div class="wbc-model">${escapeHtml(decision.champion.label)}</div>
-           </div>
-         </div>`
-      : "";
+    $("hwName").textContent = winner.label;
 
-    const rowDefs = [
-      { key: "quality", emoji: "🏆", label: "Best Quality" },
-      { key: "fastest", emoji: "⚡", label: "Fastest" },
-      { key: "cheapest", emoji: "💰", label: "Cheapest" }
+    const scored = winner.judge && winner.judge.score != null;
+    $("hwQuality").innerHTML = scored
+      ? `${winner.judge.score}<span class="kpi-unit">/10</span>`
+      : `—`;
+    $("hwLatency").innerHTML = kpiLatency(winner.latencyMs);
+    $("hwCost").innerHTML = kpiCost(winner.costUsd);
+    $("hwTps").innerHTML = winner.tps != null ? winner.tps.toFixed(0) : "—";
+
+    // Show which of the three categories this model actually took.
+    const cats = [
+      { key: "quality", label: "🏆 Quality" },
+      { key: "fastest", label: "⚡ Fastest" },
+      { key: "cheapest", label: "💰 Cheapest" }
     ];
-    $("winnerRows").innerHTML = rowDefs
-      .filter((d) => decision.winners[d.key])
-      .map((d) => {
-        const w = decision.winners[d.key];
-        return `<div class="wb-row">
-          <span class="wbr-emoji">${d.emoji}</span>
-          <span class="wbr-cat">${d.label}</span>
-          <span class="wbr-model">${escapeHtml(w.r.label)}</span>
-          <span class="wbr-val">${escapeHtml(w.value)}</span>
-        </div>`;
-      }).join("");
+    $("hwCats").innerHTML = cats.map((c) => {
+      const w = decision.winners[c.key];
+      const won = w && w.r.modelId === winner.modelId;
+      return `<span class="hw-cat${won ? " won" : ""}">${c.label}</span>`;
+    }).join("");
 
-    // State what the verdict actually rests on instead of implying a clean sweep.
+    $("hwSub").textContent = scored
+      ? "Selected on judge score, with cost and latency as tie-breakers"
+      : "Selected on cost, then latency — quality not scored";
+
     let note;
     if (decision.contenders < 2) {
       note = "Only one model returned successfully — not enough to compare.";
-    } else if (!decision.winners.quality) {
-      note = "Quality not scored — enable Auto-evaluate to rank on output quality, not just speed and price.";
-    } else if (decision.champion) {
-      note = `Won ${decision.championWins} of ${decision.categoriesScored} categories.`;
+    } else if (!scored) {
+      note = "Enable Auto-evaluate to rank on output quality rather than price alone.";
+    } else if (decision.champion && decision.champion.modelId === winner.modelId) {
+      note = `Took ${decision.championWins} of ${decision.categoriesScored} categories.`;
     } else {
-      note = "No single model swept two categories — the trade-off is yours to make.";
+      note = "Wins on quality, but not on every metric — check the matrix for trade-offs.";
     }
-    $("winnerNote").textContent = note;
-    banner.classList.remove("hidden");
+    $("hwNote").textContent = note;
+
+    hero.classList.remove("hidden");
   }
 
-  function hideWinnerBanner() { $("winnerBanner").classList.add("hidden"); }
+  // ---------- 2. Side-by-side comparison matrix ----------
+  function renderMatrix(results) {
+    const wrap = $("matrixWrap");
+    if (!results.length) { wrap.classList.add("hidden"); return; }
+
+    // Each row declares how to read a value and which direction wins,
+    // so "best" highlighting stays correct when a metric is lower-is-better.
+    const rows = [
+      { label: "Quality", get: (r) => (r.judge && r.judge.score != null ? r.judge.score : null),
+        fmt: (v) => `${v}/10`, better: "high" },
+      { label: "Latency", get: (r) => r.latencyMs,
+        fmt: (v) => (v >= 1000 ? `${(v / 1000).toFixed(1)}s` : `${v}ms`), better: "low" },
+      { label: "Cost", get: (r) => r.costUsd,
+        fmt: (v) => (v < 0.001 ? `${(v * 1000).toFixed(2)}m$` : `$${v.toFixed(4)}`), better: "low" },
+      { label: "TPS", get: (r) => r.tps,
+        fmt: (v) => v.toFixed(0), better: "high" },
+      { label: "Tokens out", get: (r) => r.outputTokensEst,
+        fmt: (v) => String(v), better: null }
+    ];
+
+    const head = `<thead><tr>
+      <th class="mx-rowlabel">Metric</th>
+      ${results.map((r) => `<th>${escapeHtml(r.label)}<span class="mx-provider">${escapeHtml(r.provider)}</span></th>`).join("")}
+    </tr></thead>`;
+
+    const body = rows.map((row) => {
+      const vals = results.map((r) => (r.error ? null : row.get(r)));
+      const numeric = vals.filter((v) => typeof v === "number" && isFinite(v));
+      let best = null;
+      if (row.better && numeric.length > 1) {
+        best = row.better === "high" ? Math.max(...numeric) : Math.min(...numeric);
+      }
+      const cells = results.map((r, i) => {
+        if (r.error) return `<td class="mx-err">failed</td>`;
+        const v = vals[i];
+        if (v == null || !isFinite(v)) return `<td class="mx-val dim">—</td>`;
+        const isBest = best != null && v === best;
+        return `<td class="mx-val${isBest ? " best" : ""}">${escapeHtml(row.fmt(v))}</td>`;
+      }).join("");
+      return `<tr><th class="mx-rowlabel">${row.label}</th>${cells}</tr>`;
+    }).join("");
+
+    $("matrixTable").innerHTML = head + `<tbody>${body}</tbody>`;
+    wrap.classList.remove("hidden");
+  }
+
+  // ---------- 3. Quality vs. Cost scatter ----------
+  const CHART_COLORS = ["#30d158", "#64d2ff", "#ffb454"];
+  let benchmarkChart = null;
+
+  function renderChart(results) {
+    const card = $("chartCard");
+    const canvas = $("benchmarkChart");
+    const fallback = $("chartFallback");
+    const plottable = results.filter((r) => !r.error && r.responseText);
+
+    if (plottable.length < 2) { card.classList.add("hidden"); return; }
+    card.classList.remove("hidden");
+
+    // Chart.js is a CDN script — on an offline home-screen launch it won't exist.
+    if (typeof Chart === "undefined") {
+      canvas.style.display = "none";
+      fallback.style.display = "block";
+      fallback.textContent = "Chart unavailable offline — reconnect and re-run to plot quality against cost.";
+      return;
+    }
+    canvas.style.display = "block";
+    fallback.style.display = "none";
+
+    const anyScored = plottable.some((r) => r.judge && r.judge.score != null);
+    $("chartSub").textContent = anyScored
+      ? "Upper-left is the sweet spot: high quality, low cost."
+      : "Quality not scored — enable Auto-evaluate so the vertical axis becomes meaningful.";
+
+    // Judge scores are 1-10; scaled to 0-100 for the axis.
+    const datasets = plottable.map((r, i) => ({
+      label: r.label,
+      data: [{
+        x: r.costUsd,
+        y: r.judge && r.judge.score != null ? r.judge.score * 10 : 0,
+        model: r.label
+      }],
+      backgroundColor: CHART_COLORS[i % CHART_COLORS.length],
+      borderColor: CHART_COLORS[i % CHART_COLORS.length],
+      pointRadius: 9,
+      pointHoverRadius: 12
+    }));
+
+    if (benchmarkChart) { benchmarkChart.destroy(); benchmarkChart = null; }
+
+    benchmarkChart = new Chart(canvas.getContext("2d"), {
+      type: "scatter",
+      data: { datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 6, right: 10 } },
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: { color: "#98989f", boxWidth: 8, usePointStyle: true, pointStyle: "circle",
+                      font: { size: 10 }, padding: 12 }
+          },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}/100 @ $${ctx.parsed.x.toFixed(5)}`
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: "Cost per run ($)", color: "#636366", font: { size: 10 } },
+            ticks: { color: "#636366", font: { size: 9 },
+                     callback: (v) => (v < 0.001 ? `${(v * 1000).toFixed(1)}m` : `$${v.toFixed(4)}`) },
+            grid: { color: "rgba(255,255,255,0.06)" },
+            beginAtZero: true
+          },
+          y: {
+            title: { display: true, text: "Quality score (0-100)", color: "#636366", font: { size: 10 } },
+            min: 0, max: 100,
+            ticks: { color: "#636366", font: { size: 9 }, stepSize: 25 },
+            grid: { color: "rgba(255,255,255,0.06)" }
+          }
+        }
+      }
+    });
+  }
+
+  // Single entry point for the whole results dashboard.
+  function renderDashboard(results) {
+    renderHeroWinner(results);
+    renderMatrix(results);
+    renderChart(results);
+    $("outputsLabel").classList.remove("hidden");
+  }
+
+  function hideWinnerBanner() {
+    $("heroWinner").classList.add("hidden");
+    $("matrixWrap").classList.add("hidden");
+    $("chartCard").classList.add("hidden");
+    $("outputsLabel").classList.add("hidden");
+    if (benchmarkChart) { benchmarkChart.destroy(); benchmarkChart = null; }
+  }
 
   function renderJudgeScore(idx, judge) {
     const card = $("resultCard" + idx);
@@ -1424,7 +1663,7 @@
       if (r.judge) renderJudgeScore(i, r.judge);
     });
     applyWinnerBadges(results);
-    renderWinnerBanner(results);
+    renderDashboard(results);
     setActiveTab(0);
   }
 
@@ -1635,7 +1874,7 @@
     }
 
     // Banner runs last so it can factor in judge scores when they exist.
-    renderWinnerBanner(results);
+    renderDashboard(results);
 
     const run = {
       timestamp: new Date().toISOString(),
