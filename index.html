@@ -217,14 +217,96 @@
   .action-item .ai-text { display: flex; flex-direction: column; }
   .action-item .ai-desc { font-size: 12px; color: var(--text-dim); font-weight: 400; margin-top: 2px; }
 
+  /* ---------- Decision Engine winner banner ---------- */
+  .winner-banner {
+    background: linear-gradient(160deg, rgba(48,209,88,0.10), rgba(48,209,88,0.02));
+    border: 1px solid rgba(48,209,88,0.28);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .winner-banner.hidden { display: none; }
+  .wb-title {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-faint); margin-bottom: 10px;
+  }
+  .wb-crown {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.3);
+    border-radius: var(--radius-input); padding: 10px 12px; margin-bottom: 12px;
+  }
+  .wb-crown .wbc-emoji { font-size: 20px; flex-shrink: 0; }
+  .wb-crown .wbc-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); }
+  .wb-crown .wbc-model { font-size: 15px; font-weight: 700; margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wb-rows { display: flex; flex-direction: column; gap: 8px; }
+  .wb-row { display: flex; align-items: center; gap: 10px; min-height: 32px; }
+  .wb-row .wbr-emoji { font-size: 15px; width: 20px; flex-shrink: 0; text-align: center; }
+  .wb-row .wbr-cat { font-size: 12px; color: var(--text-dim); width: 86px; flex-shrink: 0; }
+  .wb-row .wbr-model { font-size: 13px; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wb-row .wbr-val { font-size: 12px; font-family: var(--mono); color: var(--accent); flex-shrink: 0; }
+  .wb-note { font-size: 11.5px; color: var(--text-faint); margin-top: 10px; line-height: 1.4; }
+
+  /* ---------- KPI grid inside result cards ---------- */
+  .kpi-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--surface-border);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-input);
+    overflow: hidden; margin-bottom: 12px;
+  }
+  .kpi { background: var(--surface-2); padding: 12px 10px; text-align: center; }
+  .kpi-value {
+    font-family: var(--mono); font-size: 21px; font-weight: 700; line-height: 1.1;
+    letter-spacing: -0.02em; color: var(--text);
+  }
+  .kpi-value .kpi-unit { font-size: 11px; font-weight: 600; color: var(--text-faint); margin-left: 2px; }
+  .kpi-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-faint); margin-top: 5px; }
+  .kpi.latency .kpi-value { color: #64d2ff; }
+  .kpi.tps .kpi-value { color: #ffb454; }
+  .kpi.cost .kpi-value { color: var(--accent); }
+  .kpi.score .kpi-value { color: #bf5af2; }
+
+  /* ---------- Race progress shimmer ---------- */
+  @keyframes shimmer { 0% { background-position: -420px 0; } 100% { background-position: 420px 0; } }
+  .shimmer {
+    background: linear-gradient(90deg, var(--surface-2) 0%, var(--surface-3) 40%, var(--surface-2) 80%);
+    background-size: 420px 100%;
+    animation: shimmer 1.3s linear infinite;
+    border-radius: 6px;
+    color: transparent !important;
+  }
+  .skeleton-line { height: 12px; margin-bottom: 8px; }
+  .skeleton-line.w90 { width: 90%; }
+  .skeleton-line.w75 { width: 75%; }
+  .skeleton-line.w60 { width: 60%; }
+  .racing-label {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 11.5px; font-weight: 600; color: var(--accent);
+    margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  @keyframes pulseDot { 0%,100% { opacity: 0.35; } 50% { opacity: 1; } }
+  .racing-label .rl-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulseDot 1s ease-in-out infinite; }
+
+  /* ---------- Empty state ---------- */
+  .empty-state {
+    text-align: center; padding: 44px 26px;
+    border: 1px dashed rgba(255,255,255,0.14); border-radius: var(--radius-card);
+    background: linear-gradient(180deg, rgba(255,255,255,0.015), transparent);
+  }
+  .empty-state .es-icon {
+    width: 56px; height: 56px; margin: 0 auto 14px;
+    border-radius: 50%; background: var(--surface-2); border: 1px solid var(--surface-border);
+    display: flex; align-items: center; justify-content: center; color: var(--accent);
+  }
+  .empty-state .es-icon svg { width: 26px; height: 26px; }
+  .empty-state .es-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+  .empty-state .es-body { font-size: 13px; color: var(--text-dim); line-height: 1.5; max-width: 270px; margin: 0 auto; }
+
   /* ---------- Results ---------- */
   #results { display: flex; flex-direction: column; }
   #results .result-card { display: none; }
   #results .result-card.active { display: block; }
-  .empty-state {
-    text-align: center; color: var(--text-faint); font-size: 14px; padding: 36px 20px;
-    border: 1px dashed rgba(255,255,255,0.16); border-radius: var(--radius-card);
-  }
   .result-card {
     background: var(--surface); border: 1px solid var(--surface-border);
     border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 14px 16px;
@@ -239,10 +321,6 @@
   .status-dot.err { background: var(--coral); }
   .status-dot.pending { background: var(--text-faint); }
 
-  .metrics-row { display: flex; gap: 12px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin-bottom: 10px; flex-wrap: wrap; }
-  .metrics-row .metric strong { color: var(--text); font-weight: 600; }
-  .metric.cost strong { color: var(--accent); }
-  .metric.tps strong { color: #ffb454; }
   .response-text {
     font-size: 14px; line-height: 1.5; color: var(--text); white-space: pre-wrap; word-break: break-word;
     max-height: 220px; overflow-y: auto; background: var(--surface-2); border-radius: var(--radius-input); padding: 10px 12px;
@@ -271,7 +349,17 @@
   .btn { min-height: 48px; border-radius: var(--radius-input); border: none; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn:active { transform: scale(0.98); }
   .btn:disabled { opacity: 0.5; }
-  .btn-primary { flex: 1 1 65%; background: var(--accent); color: var(--accent-ink); }
+  .btn-primary {
+    flex: 1; background: var(--accent); color: var(--accent-ink);
+    font-size: 16px; font-weight: 800; letter-spacing: -0.01em;
+    box-shadow: 0 4px 14px rgba(48,209,88,0.28);
+  }
+  .btn-primary:disabled { box-shadow: none; }
+  .btn-icon-secondary {
+    flex: 0 0 52px; width: 52px; background: var(--surface-2); color: var(--text);
+    border: 1px solid rgba(255,255,255,0.14);
+  }
+  .btn-icon-secondary svg { width: 20px; height: 20px; }
   .btn-secondary { flex: 0 0 35%; background: var(--surface-2); color: var(--text); border: 1px solid rgba(255,255,255,0.14); }
 
   /* ---------- Sheets (Layer 3) ---------- */
@@ -372,7 +460,7 @@
 
     <section>
       <button class="accordion-header" id="advancedHeader" aria-expanded="false">
-        <span>Advanced API</span>
+        <span>⚙️ Advanced Settings</span>
         <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
       </button>
       <div class="accordion-body" id="advancedBody">
@@ -447,6 +535,14 @@
 
     <section>
       <div class="section-label">Results</div>
+
+      <div class="winner-banner hidden" id="winnerBanner">
+        <div class="wb-title">Decision Engine</div>
+        <div id="winnerCrown"></div>
+        <div class="wb-rows" id="winnerRows"></div>
+        <div class="wb-note" id="winnerNote"></div>
+      </div>
+
       <div class="segmented-wrap" id="segmentedWrap" style="display:none;">
         <div class="segmented" id="segmented">
           <div class="thumb" id="segThumb"></div>
@@ -456,13 +552,21 @@
         </div>
       </div>
       <div id="results">
-        <div class="empty-state">Run a benchmark to see responses, latency, and live cost side by side.</div>
+        <div class="empty-state">
+          <div class="es-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8z"/></svg>
+          </div>
+          <div class="es-title">Ready to Race</div>
+          <div class="es-body">Tap Run Benchmark to see live cost, latency, and quality comparisons side-by-side.</div>
+        </div>
       </div>
     </section>
   </main>
 
   <div class="bottom-bar">
-    <button class="btn btn-secondary" id="exportBtn" disabled>Export</button>
+    <button class="btn btn-icon-secondary" id="exportBtn" disabled aria-label="Export run">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+    </button>
     <button class="btn btn-primary" id="runBtn">Run Benchmark</button>
   </div>
 
@@ -1085,13 +1189,19 @@
           </span>
           <span class="spinner"></span>
         </div>
-        <div class="metrics-row">
-          <span class="metric latency">latency <strong>—</strong></span>
-          <span class="metric tps">tps <strong>—</strong></span>
-          <span class="metric tokens">tok in/out <strong>—</strong></span>
-          <span class="metric cost">cost <strong>$—</strong></span>
+        <div class="racing-label"><span class="rl-dot"></span><span>Racing…</span></div>
+        <div class="kpi-grid">
+          <div class="kpi latency"><div class="kpi-value shimmer">000</div><div class="kpi-label">Latency</div></div>
+          <div class="kpi tps"><div class="kpi-value shimmer">000</div><div class="kpi-label">Tokens/sec</div></div>
+          <div class="kpi cost"><div class="kpi-value shimmer">000</div><div class="kpi-label">Cost</div></div>
+          <div class="kpi score"><div class="kpi-value shimmer">000</div><div class="kpi-label">Score</div></div>
         </div>
-        <div class="response-text">Waiting for response…</div>
+        <div class="response-text">
+          <div class="skeleton-line shimmer w90"></div>
+          <div class="skeleton-line shimmer w75"></div>
+          <div class="skeleton-line shimmer w90"></div>
+          <div class="skeleton-line shimmer w60"></div>
+        </div>
         <div class="judge-slot"></div>`;
       els.results.appendChild(card);
     });
@@ -1101,16 +1211,41 @@
     setActiveTab(0);
   }
 
+  // Formats a KPI so big numbers stay readable at 21px on a 414px screen.
+  function kpiLatency(ms) {
+    if (ms == null) return "—";
+    return ms >= 1000
+      ? `${(ms / 1000).toFixed(1)}<span class="kpi-unit">s</span>`
+      : `${ms}<span class="kpi-unit">ms</span>`;
+  }
+  function kpiCost(usd) {
+    if (usd == null) return "—";
+    if (usd === 0) return `0`;
+    if (usd < 0.001) return `${(usd * 1000).toFixed(2)}<span class="kpi-unit">m$</span>`;
+    return `$${usd.toFixed(4)}`;
+  }
+  function setKpi(card, cls, html) {
+    const el = card.querySelector(`.kpi.${cls} .kpi-value`);
+    if (!el) return;
+    el.classList.remove("shimmer");
+    el.innerHTML = html;
+  }
+
   // Called on every streamed delta — only touches the response text node.
   function streamIntoCard(idx, fullText) {
     const card = $("resultCard" + idx);
     if (!card) return;
     const body = card.querySelector(".response-text");
-    if (body) {
-      const pinnedToBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 30;
-      body.textContent = fullText;
-      if (pinnedToBottom) body.scrollTop = body.scrollHeight;
+    if (!body) return;
+    // First delta: tear out the skeleton lines and switch to live text.
+    if (body.querySelector(".skeleton-line")) {
+      body.innerHTML = "";
+      const racing = card.querySelector(".racing-label span:last-child");
+      if (racing) racing.textContent = "Streaming…";
     }
+    const pinnedToBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 30;
+    body.textContent = fullText;
+    if (pinnedToBottom) body.scrollTop = body.scrollHeight;
   }
 
   function finalizeCard(idx, r) {
@@ -1119,25 +1254,26 @@
     card.classList.remove("is-loading");
     card.classList.toggle("is-error", !!r.error);
 
+    const racing = card.querySelector(".racing-label");
+    if (racing) racing.remove();
+
     const spinner = card.querySelector(".spinner");
     if (spinner) spinner.outerHTML = `<span class="status-dot ${r.error ? "err" : "ok"}"></span>`;
 
     const routeBadge = card.querySelector(".route-badge");
     if (routeBadge) routeBadge.textContent = r.routedVia || "—";
 
-    const metrics = card.querySelector(".metrics-row");
-    if (metrics) {
-      metrics.innerHTML = `
-        <span class="metric latency">latency <strong>${r.latencyMs != null ? r.latencyMs + "ms" : "—"}</strong></span>
-        <span class="metric tps">tps <strong>${r.tps != null ? r.tps.toFixed(1) : "—"}</strong></span>
-        <span class="metric tokens">tok in/out <strong>${r.inputTokensEst ?? "—"}/${r.outputTokensEst ?? "—"}</strong></span>
-        <span class="metric cost">cost <strong>$${r.costUsd != null ? r.costUsd.toFixed(5) : "—"}</strong></span>`;
-    }
+    setKpi(card, "latency", r.error ? "—" : kpiLatency(r.latencyMs));
+    setKpi(card, "tps", r.error || r.tps == null ? "—" : r.tps.toFixed(0));
+    setKpi(card, "cost", r.error ? "—" : kpiCost(r.costUsd));
+    // Score stays shimmering only if the judge is still running; otherwise dash it.
+    if (!r.judgePending) setKpi(card, "score", r.judge && r.judge.score != null ? `${r.judge.score}<span class="kpi-unit">/10</span>` : "—");
 
     const body = card.querySelector(".response-text");
     if (r.error) {
       if (body) body.outerHTML = `<div class="error-text">${escapeHtml(r.error)}</div>`;
     } else if (body) {
+      body.innerHTML = "";
       body.textContent = r.responseText || "(empty response)";
     }
 
@@ -1166,9 +1302,97 @@
     });
   }
 
+  // ================= Decision Engine banner =================
+  // Computes category winners and, when one model takes 2+ categories,
+  // crowns it as the production recommendation.
+  function computeDecision(results) {
+    const ok = results.filter((r) => !r.error && r.responseText);
+    if (!ok.length) return null;
+
+    const winners = {};
+    const judged = ok.filter((r) => r.judge && r.judge.score != null);
+    if (judged.length) {
+      const best = judged.reduce((a, b) => (b.judge.score > a.judge.score ? b : a));
+      winners.quality = { r: best, value: `${best.judge.score}/10` };
+    }
+    const fastest = ok.reduce((a, b) => (b.latencyMs < a.latencyMs ? b : a));
+    winners.fastest = { r: fastest, value: fastest.latencyMs >= 1000 ? `${(fastest.latencyMs / 1000).toFixed(1)}s` : `${fastest.latencyMs}ms` };
+    const cheapest = ok.reduce((a, b) => (b.costUsd < a.costUsd ? b : a));
+    winners.cheapest = { r: cheapest, value: `$${cheapest.costUsd.toFixed(5)}` };
+
+    // Tally category wins per model to find a multi-category champion.
+    // Requires at least two surviving models — winning 3/3 because the other
+    // two errored out isn't a recommendation, it's the only option left.
+    const tally = new Map();
+    Object.values(winners).forEach((w) => tally.set(w.r.modelId, (tally.get(w.r.modelId) || 0) + 1));
+    let champion = null, championWins = 0;
+    if (ok.length >= 2) {
+      tally.forEach((count, modelId) => {
+        if (count >= 2 && count > championWins) {
+          championWins = count;
+          champion = ok.find((r) => r.modelId === modelId);
+        }
+      });
+    }
+
+    return { winners, champion, championWins, categoriesScored: Object.keys(winners).length, contenders: ok.length };
+  }
+
+  function renderWinnerBanner(results) {
+    const banner = $("winnerBanner");
+    const decision = computeDecision(results);
+    if (!decision) { banner.classList.add("hidden"); return; }
+
+    $("winnerCrown").innerHTML = decision.champion
+      ? `<div class="wb-crown">
+           <span class="wbc-emoji">👑</span>
+           <div style="min-width:0;">
+             <div class="wbc-label">Recommended for production</div>
+             <div class="wbc-model">${escapeHtml(decision.champion.label)}</div>
+           </div>
+         </div>`
+      : "";
+
+    const rowDefs = [
+      { key: "quality", emoji: "🏆", label: "Best Quality" },
+      { key: "fastest", emoji: "⚡", label: "Fastest" },
+      { key: "cheapest", emoji: "💰", label: "Cheapest" }
+    ];
+    $("winnerRows").innerHTML = rowDefs
+      .filter((d) => decision.winners[d.key])
+      .map((d) => {
+        const w = decision.winners[d.key];
+        return `<div class="wb-row">
+          <span class="wbr-emoji">${d.emoji}</span>
+          <span class="wbr-cat">${d.label}</span>
+          <span class="wbr-model">${escapeHtml(w.r.label)}</span>
+          <span class="wbr-val">${escapeHtml(w.value)}</span>
+        </div>`;
+      }).join("");
+
+    // State what the verdict actually rests on instead of implying a clean sweep.
+    let note;
+    if (decision.contenders < 2) {
+      note = "Only one model returned successfully — not enough to compare.";
+    } else if (!decision.winners.quality) {
+      note = "Quality not scored — enable Auto-evaluate to rank on output quality, not just speed and price.";
+    } else if (decision.champion) {
+      note = `Won ${decision.championWins} of ${decision.categoriesScored} categories.`;
+    } else {
+      note = "No single model swept two categories — the trade-off is yours to make.";
+    }
+    $("winnerNote").textContent = note;
+    banner.classList.remove("hidden");
+  }
+
+  function hideWinnerBanner() { $("winnerBanner").classList.add("hidden"); }
+
   function renderJudgeScore(idx, judge) {
-    const slot = $("resultCard" + idx)?.querySelector(".judge-slot");
-    if (!slot || !judge) return;
+    const card = $("resultCard" + idx);
+    if (!card || !judge) return;
+    setKpi(card, "score", judge.score != null ? `${judge.score}<span class="kpi-unit">/10</span>` : "—");
+    const slot = card.querySelector(".judge-slot");
+    if (!slot) return;
     slot.innerHTML = `
       <div class="judge-box">
         <div class="judge-score">${judge.score != null ? judge.score : "–"}</div>
@@ -1181,7 +1405,15 @@
     els.results.innerHTML = "";
     if (!results.length) {
       els.segmentedWrap.style.display = "none";
-      els.results.innerHTML = '<div class="empty-state">Run a benchmark to see responses, latency, and live cost side by side.</div>';
+      hideWinnerBanner();
+      els.results.innerHTML = `
+        <div class="empty-state">
+          <div class="es-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8z"/></svg>
+          </div>
+          <div class="es-title">Ready to Race</div>
+          <div class="es-body">Tap Run Benchmark to see live cost, latency, and quality comparisons side-by-side.</div>
+        </div>`;
       return;
     }
     liveResults = results;
@@ -1192,6 +1424,7 @@
       if (r.judge) renderJudgeScore(i, r.judge);
     });
     applyWinnerBadges(results);
+    renderWinnerBanner(results);
     setActiveTab(0);
   }
 
@@ -1339,8 +1572,9 @@
     const params = getHyperparams();
 
     els.runBtn.disabled = true;
-    els.runBtn.textContent = "Running…";
+    els.runBtn.textContent = "Racing…";
     activeTab = 0;
+    hideWinnerBanner();
     buildResultScaffolding(models);
 
     const inputTokensEst = estimateTokens(sys) + estimateTokens(dataset);
@@ -1372,7 +1606,8 @@
         latencyMs, firstTokenMs, tps, inputTokensEst, outputTokensEst, costUsd,
         responseText: text, error: error || null, routedVia,
         temperature: params.temperature, maxTokens: params.maxTokens, streamed: params.stream,
-        judge: null, isFastest: false, isCheapest: false
+        judge: null, isFastest: false, isCheapest: false,
+        judgePending: els.autoEval.checked && !!selected.J && !error
       };
       finalizeCard(idx, r);
       return r;
@@ -1385,9 +1620,22 @@
       showToast("Judging outputs…");
       try {
         const verdicts = await evaluateWithJudge(selected.J, sys, dataset, results);
-        verdicts.forEach((v, i) => { results[i].judge = v; renderJudgeScore(i, v); });
-      } catch (err) { showToast("Judging failed: " + err.message); }
+        verdicts.forEach((v, i) => {
+          results[i].judge = v;
+          results[i].judgePending = false;
+          renderJudgeScore(i, v);
+        });
+      } catch (err) {
+        showToast("Judging failed: " + err.message);
+        results.forEach((r, i) => {
+          r.judgePending = false;
+          setKpi($("resultCard" + i), "score", "—");
+        });
+      }
     }
+
+    // Banner runs last so it can factor in judge scores when they exist.
+    renderWinnerBanner(results);
 
     const run = {
       timestamp: new Date().toISOString(),
