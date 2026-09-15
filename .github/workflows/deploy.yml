@@ -24,11 +24,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
-      # Using `npm install`, not `npm ci` — this repo's current .gitignore
-      # excludes package-lock.json, and npm ci hard-requires a lockfile.
-      # Commit the lockfile and switch this to `npm ci` for reproducible builds.
+      # Using `npm install`, not `npm ci` — this repo's .gitignore excludes
+      # package-lock.json, and npm ci hard-requires a lockfile. Commit the
+      # lockfile and switch this to `npm ci` for reproducible builds.
       - name: Install dev dependencies
         run: npm install
 
